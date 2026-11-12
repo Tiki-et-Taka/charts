@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charts — Connexion</title>
+<link rel="icon" type="image/png" href="img/favicon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css?v=17">
+<script src="js/site-scale.js?v=8"></script>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --ink: #f2f0eb;
+    --muted: #8a8680;
+    --line: #2a2a2a;
+    --accent: #e68a1e;
+    --accent-ink: #111;
+    --font-display: "Archivo Black", "Oswald", Impact, sans-serif;
+    --font-ui: "Oswald", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    display: flex;
+    flex-direction: column;
+  }
+  a { color: var(--accent); }
+  .auth {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 36px 16px 96px;
+  }
+  .panel { width: min(440px, 100%); }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: 42px;
+    letter-spacing: .04em;
+    line-height: 1;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .lead {
+    margin: 10px 0 18px;
+    color: var(--muted);
+    font-size: 16px;
+    letter-spacing: .03em;
+  }
+  form[hidden] { display: none; }
+  .field { margin-bottom: 12px; }
+  .field[hidden] { display: none; }
+  .field label, .linkish {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  input[type="email"],
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    background: #121418;
+    color: var(--ink);
+    border: 1px solid #2a2c32;
+    padding: 12px;
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: .03em;
+  }
+  input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  .check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: .01em;
+    text-transform: none;
+    color: var(--ink);
+    font-family: var(--font-ui);
+  }
+  .check input {
+    width: 16px;
+    height: 16px;
+    margin: 2px 0 0;
+    flex: 0 0 auto;
+    accent-color: var(--accent);
+  }
+  button[type="submit"] {
+    appearance: none;
+    width: 100%;
+    margin-top: 8px;
+    border: 0;
+    cursor: pointer;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 12px;
+  }
+  button[type="submit"]:hover { background: #f09a2e; }
+  button[type="submit"]:disabled { opacity: .6; cursor: wait; }
+  .linkish {
+    appearance: none;
+    border: 0;
+    background: none;
+    padding: 0;
+    margin-top: 12px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .linkish:hover { color: var(--ink); }
+  .note, .msg {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  .note {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+    margin-top: 22px;
+  }
+  .msg { color: #e07060; min-height: 1.2em; }
+  .msg.ok { color: #8cc084; }
+</style>
+</head>
+<body>
+<main class="auth">
+  <div class="panel">
+    <div class="brand"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="42" height="42">Charts</div>
+    <p class="lead" id="lead">Retrouve ton compte.</p>
+
+    <form id="loginForm" data-view="login" autocomplete="on" hidden>
+      <div class="field">
+        <label for="loginEmail">E-mail</label>
+        <input id="loginEmail" name="email" type="email" autocomplete="username" placeholder="Ton adresse e-mail">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Mot de passe</label>
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Ton mot de passe">
+      </div>
+      <button type="submit">Entrer</button>
+      <button type="button" class="linkish" data-go="forgot">Mot de passe oublié</button>
+      <p class="note">Charts est en bêta fermée : l’accès se fait sur invitation, par e-mail.</p>
+    </form>
+
+    <form id="forgotForm" data-view="forgot" autocomplete="on" hidden>
+      <div class="field">
+        <label for="forgotEmail">E-mail</label>
+        <input id="forgotEmail" name="email" type="email" autocomplete="username" placeholder="Ton adresse e-mail">
+      </div>
+      <button type="submit">Recevoir le lien</button>
+      <button type="button" class="linkish" data-go="login">Retour à la connexion</button>
+    </form>
+
+    <form id="profileForm" data-view="profile" autocomplete="off" hidden>
+      <div class="field">
+        <label for="profilePseudo">Pseudo</label>
+        <input id="profilePseudo" name="pseudo" type="text" maxlength="16" autocomplete="nickname" placeholder="Ton pseudo">
+      </div>
+      <div class="field" data-password-field hidden>
+        <label for="profilePassword">Mot de passe</label>
+        <input id="profilePassword" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="8 caractères minimum">
+      </div>
+      <div class="field" data-password-field hidden>
+        <label for="profilePassword2">Confirmation</label>
+        <input id="profilePassword2" name="password2" type="password" autocomplete="new-password" placeholder="Ton mot de passe">
+      </div>
+      <label class="check">
+        <input type="checkbox" id="profileTerms" name="terms">
+        <span>J’accepte les <a href="legal/regles.html">règles</a> et la <a href="legal/confidentialite.html">politique de données personnelles</a>.</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="profileAge" name="age">
+        <span>J’ai 15 ans ou plus.</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="profileNews" name="news">
+        <span>Je veux recevoir les nouvelles de Charts.</span>
+      </label>
+      <button type="submit">Entrer dans Charts</button>
+      <button type="button" class="linkish" data-logout>Changer de compte</button>
+    </form>
+
+    <form id="newPasswordForm" data-view="newpass" autocomplete="off" hidden>
+      <div class="field">
+        <label for="newPassword">Nouveau mot de passe</label>
+        <input id="newPassword" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="8 caractères minimum">
+      </div>
+      <div class="field">
+        <label for="newPassword2">Confirmation</label>
+        <input id="newPassword2" name="password2" type="password" autocomplete="new-password" placeholder="Ton mot de passe">
+      </div>
+      <button type="submit">Enregistrer</button>
+    </form>
+
+    <p class="msg" id="authMsg" role="status"></p>
+  </div>
+</main>
+<footer class="site-foot">
+  <nav class="legal-links" aria-label="Informations légales">
+    <a href="legal/regles.html">Règles</a>
+    <a href="legal/index.html?v=2">Mentions légales</a>
+  </nav>
+</footer>
+<script>
+/* Lu avant supabase-js, qui consomme le fragment des liens d’invitation et de réinitialisation. */
+window.ChartsAuthLink = (function(){
+  const hash = new URLSearchParams(location.hash.slice(1));
+  return {
+    type: hash.get("type") || "",
+    error: hash.get("error_code") || hash.get("error") || ""
+  };
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+<script src="js/charts-config.js?v=1"></script>
+<script src="js/charts-api.js?v=2"></script>
+<script src="js/accounts.js?v=6"></script>
+<script>
+const LEADS = {
+  login: "Retrouve ton compte.",
+  forgot: "Indique ton e-mail : un lien de réinitialisation t’y attend.",
+  profile: "Dernière étape : choisis ton pseudo.",
+  invite: "Bienvenue dans la bêta : choisis ton mot de passe et ton pseudo.",
+  newpass: "Choisis ton nouveau mot de passe."
+};
+const LINK_ERRORS = {
+  otp_expired: "Ce lien a expiré. Demande un nouveau lien ci-dessous, ou une nouvelle invitation.",
+  access_denied: "Ce lien n’est plus valable. Demande un nouveau lien ci-dessous, ou une nouvelle invitation."
+};
+const $ = id => document.getElementById(id);
+const msg = $("authMsg");
+let needPassword = false;
+
+function showMsg(text, ok){
+  msg.textContent = text || "";
+  msg.classList.toggle("ok", !!ok);
+}
+function showView(view, lead){
+  document.querySelectorAll("[data-view]").forEach(form => {
+    form.hidden = form.dataset.view !== view;
+  });
+  $("lead").textContent = LEADS[lead || view];
+  showMsg("");
+  const form = document.querySelector(`[data-view="${view}"]`);
+  const field = form && form.querySelector("input:not([type=checkbox])");
+  if(field) field.focus();
+}
+function showProfile(withPassword){
+  needPassword = withPassword;
+  document.querySelectorAll("[data-password-field]").forEach(el => { el.hidden = !withPassword; });
+  showView("profile", withPassword ? "invite" : "profile");
+}
+async function busy(form, run){
+  const btn = form.querySelector("button[type=submit]");
+  btn.disabled = true;
+  try {
+    return await run();
+  } catch(err){
+    console.warn("[Charts]", err);
+    return { ok: false, why: "Serveur injoignable pour le moment, réessaie." };
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.addEventListener("click", ev => {
+  const go = ev.target.closest("[data-go]");
+  if(go){
+    showView(go.dataset.go);
+    if(go.dataset.go === "forgot") $("forgotEmail").value = $("loginEmail").value;
+  }
+  if(ev.target.closest("[data-logout]")) ChartsAccounts.logout();
+});
+
+$("loginForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const result = await busy(ev.target, () => ChartsAccounts.login($("loginEmail").value, $("loginPassword").value));
+  if(!result.ok) return showMsg(result.why);
+  if(result.needsProfile) return showProfile(false);
+  ChartsAccounts.goApp();
+});
+
+$("forgotForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const result = await busy(ev.target, () => ChartsAccounts.requestReset($("forgotEmail").value));
+  showMsg(result.why, result.ok);
+});
+
+$("profileForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const result = await busy(ev.target, () => ChartsAccounts.completeProfile({
+    pseudo: $("profilePseudo").value,
+    needPassword,
+    password: $("profilePassword").value,
+    password2: $("profilePassword2").value,
+    terms: $("profileTerms").checked,
+    age: $("profileAge").checked,
+    news: $("profileNews").checked
+  }));
+  if(!result.ok) return showMsg(result.why);
+  ChartsAccounts.goApp();
+});
+
+$("newPasswordForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const result = await busy(ev.target, () => ChartsAccounts.setPassword($("newPassword").value, $("newPassword2").value));
+  if(!result.ok) return showMsg(result.why);
+  const state = await ChartsAccounts.state();
+  if(!state.profile) return showProfile(false);
+  ChartsAccounts.goApp();
+});
+
+(async function start(){
+  const link = window.ChartsAuthLink;
+  if(link.error){
+    showView("forgot");
+    showMsg(LINK_ERRORS[link.error] || "Ce lien n’est pas valable.");
+    return;
+  }
+  let state = { user: null, profile: null };
+  try {
+    state = await ChartsAccounts.state();
+  } catch(err){
+    console.warn("[Charts] session :", err);
+  }
+  if(!state.user) return showView("login");
+  if(link.type === "recovery") return showView("newpass");
+  if(link.type === "invite" || link.type === "signup") return showProfile(link.type === "invite");
+  if(!state.profile) return showProfile(false);
+  ChartsAccounts.goApp();
+})();
+</script>
+</body>
+</html>

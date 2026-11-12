@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charts — Règles</title>
+<link rel="icon" type="image/png" href="../img/favicon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="legal.css?v=2">
+<link rel="stylesheet" href="../css/site.css?v=13">
+<script src="../js/site-scale.js?v=8"></script>
+<script src="../js/legal-return.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="../lobby.html"><img class="brand-logo" src="../img/favicon.png?v=2" alt="" width="32" height="32">CHARTS</a>
+  <p class="tag">Fantasy</p>
+
+  <nav class="legal-nav" aria-label="Pages">
+    <a href="regles.html" aria-current="page">Règles</a>
+    <a href="index.html">Mentions</a>
+    <a href="taux.html">Taux de tirage</a>
+    <a href="confidentialite.html">Données personnelles</a>
+    <a href="../lobby.html?v=2">← Lobby</a>
+  </nav>
+
+  <article id="rules"><p>Chargement des règles…</p></article>
+
+  <p><a class="back" id="backLink" href="../lobby.html?v=2">← Lobby</a></p>
+</div>
+<script>
+(function(){
+  function esc(s){
+    return s.replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    }[ch]));
+  }
+  function isSection(line){
+    return /^\d+\.\s*\S/.test(line) && !/[.!?]$/.test(line);
+  }
+  function isShort(line){
+    return line.length <= 36 && !/[.!?]$/.test(line);
+  }
+  function renderRules(md){
+    const lines = md.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+    const blocks = [];
+    let cur = [];
+    const flush = () => { if(cur.length){ blocks.push(cur); cur = []; } };
+    for(const raw of lines){
+      const line = raw.trim();
+      if(!line) flush();
+      else cur.push(line);
+    }
+    flush();
+    let html = "";
+    let first = true;
+    for(const block of blocks){
+      const rows = block.slice();
+      if(first && rows.length === 1 && !isSection(rows[0])){
+        html += `<h1>${esc(rows[0])}</h1>`;
+        first = false;
+        continue;
+      }
+      first = false;
+      if(rows.length && isSection(rows[0])){
+        html += `<h2>${esc(rows.shift().replace(/^(\d+)\.(?=\S)/, "$1. "))}</h2>`;
+      }
+      if(!rows.length) continue;
+      if(rows.every(l => l.startsWith("* "))){
+        html += "<ul>" + rows.map(l => `<li>${esc(l.slice(2))}</li>`).join("") + "</ul>";
+        continue;
+      }
+      if(rows.every(l => /^\d+\.\s/.test(l))){
+        html += "<ol>" + rows.map(l => `<li>${esc(l.replace(/^\d+\.\s*/, ""))}</li>`).join("") + "</ol>";
+        continue;
+      }
+      if(isShort(rows[0]) && rows.length > 1){
+        html += `<h3>${esc(rows.shift())}</h3>`;
+      } else if(rows.length === 1 && isShort(rows[0])){
+        html += `<h3>${esc(rows[0])}</h3>`;
+        continue;
+      }
+      let tail = 0;
+      for(let i = rows.length - 1; i >= 0; i--){
+        if(isShort(rows[i])) tail++;
+        else break;
+      }
+      const prose = tail >= 2 ? rows.slice(0, rows.length - tail) : rows;
+      const items = tail >= 2 ? rows.slice(rows.length - tail) : [];
+      for(const p of prose) html += `<p>${esc(p)}</p>`;
+      if(items.length) html += "<ul>" + items.map(l => `<li>${esc(l)}</li>`).join("") + "</ul>";
+    }
+    return html;
+  }
+
+  const root = document.getElementById("rules");
+  fetch("../../docs/13-regles.md", { cache: "no-store" })
+    .then(res => {
+      if(!res.ok) throw new Error("rules");
+      return res.text();
+    })
+    .then(md => { root.innerHTML = renderRules(md); })
+    .catch(() => {
+      root.innerHTML = "<p>Impossible de charger les règles.</p>";
+    });
+})();
+</script>
+</body>
+</html>
