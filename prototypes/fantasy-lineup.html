@@ -1660,9 +1660,6 @@ async function boot(){
   }
   if(params.get("edit") === "1"){
     editSession = true;
-    params.delete("edit");
-    const qs = params.toString();
-    history.replaceState(null, "", `${location.pathname}${qs ? `?${qs}` : ""}`);
   }
   try {
     const [catDoc, extraRes] = await Promise.all([
