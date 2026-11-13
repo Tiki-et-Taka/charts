@@ -858,6 +858,7 @@ let filterInstr = "";
 let filterGenre = "";
 let filterQ = "";
 let hideMissing = true;
+let lastGridHtml = "";
 let newOnly = false;
 let favOnly = false;
 let sortBy = "num";
@@ -1104,7 +1105,17 @@ function switchUser(nextId){
   return true;
 }
 
+const plateSrc = new Map();
+function plateUrl(job){
+  const url = `../out/illustrations/webp/${job}.webp`;
+  return plateSrc.get(url) || url;
+}
 function imgFallback(el){
+  const first = el.getAttribute("src");
+  el.onload = function(){
+    const now = this.getAttribute("src");
+    if(now !== first) plateSrc.set(first, now);
+  };
   el.onerror = function(){
     this.onerror = function(){
       this.onerror = null;
@@ -1158,7 +1169,7 @@ function renderCard(card, opts={}){
   const cls = `card r${tier.rank}${paper ? " paper" : ""}${diamant ? " diamant" : ""}${opts.zoomable === false ? "" : " zoomable"}`;
   const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" tabindex="${opts.zoomable === false ? "-1" : "0"}" data-id="${esc(card.id)}">
-    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp" alt="" loading="lazy"></div>
+    <div class="art"><img src="${esc(plateUrl(card.job))}" alt="" loading="lazy"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
       <div class="accent" style="background:${fam.a1}"></div>
@@ -1293,6 +1304,7 @@ function render(){
   $("binder").hidden = false;
   const grid = $("grid");
   if(!slice.length){
+    lastGridHtml = "";
     grid.innerHTML = `<p class="empty">${
       favOnly
         ? "Aucun favori pour l’instant. Marque une carte avec ★."
@@ -1303,14 +1315,18 @@ function render(){
             : "Aucune carte pour ce filtre."
     }</p>`;
   } else {
-    grid.innerHTML = slice.map(card => {
+    const html = slice.map(card => {
       const got = owned[card.id];
       return got
         ? ownedCardHtml(card, got.n || 1, isFresh(card.id), !!fav[card.id])
         : holeHtml(card);
     }).join("");
-    grid.querySelectorAll(".art img").forEach(imgFallback);
-    scaleBinderCards();
+    if(html !== lastGridHtml){
+      lastGridHtml = html;
+      grid.innerHTML = html;
+      grid.querySelectorAll(".art img").forEach(imgFallback);
+      scaleBinderCards();
+    }
   }
 
   $("pager").hidden = pages <= 1;
