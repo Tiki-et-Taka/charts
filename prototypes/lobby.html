@@ -457,6 +457,54 @@
     .card { transition: none; }
     .card-booster .cta { animation: none; color: var(--accent); }
   }
+
+  .nav-badge {
+    position: absolute;
+    top: -7px; right: -14px;
+    min-width: 15px; height: 15px; padding: 0 4px;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 500; line-height: 15px;
+    text-align: center;
+    letter-spacing: 0;
+    text-transform: none;
+    pointer-events: none;
+  }
+  .nav-badge[hidden] { display: none; }
+  .card-booster .nav-badge {
+    top: 12px; right: 12px; z-index: 4;
+    min-width: 22px; height: 22px; line-height: 22px;
+    font-size: 12px;
+  }
+  .welcome {
+    margin: auto;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    padding: 28px 28px 22px;
+    max-width: 460px;
+    width: calc(100% - 32px);
+  }
+  .welcome::backdrop { background: rgba(0, 0, 0, .72); }
+  .welcome p {
+    margin: 0 0 22px;
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: .02em;
+  }
+  .welcome a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: var(--accent-ink);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 12px 18px;
+  }
 </style>
 </head>
 <body>
@@ -466,7 +514,7 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a class="on" href="lobby.html" aria-current="page">Lobby</a>
-    <a href="booster.html">Booster</a>
+    <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
     <a href="classeur.html">Classeur</a>
     <a href="booster.html#marche">Marché</a>
     <a href="fantasy.html?v=16">Fantasy</a>
@@ -488,6 +536,7 @@
 <main class="wrap">
   <nav class="grid" aria-label="Accès rapides">
     <a class="card card-booster" href="booster.html" aria-label="Ouvrir un booster">
+      <span class="nav-badge" id="packTileBadge" hidden>0</span>
       <div class="card-art">
         <div class="pack">
           <img src="img/lobby/booster.png?v=19" alt="">
@@ -519,6 +568,11 @@
   </nav>
 
 </main>
+
+<dialog class="welcome" id="welcome" aria-labelledby="welcomeText">
+  <p id="welcomeText">Bienvenu sur CHARTS ! Collectionne dès maintenant tes artistes préférés et créé les groupes de tes rêves ! Pour commencer sur de bonnes bases, nous t'offrons 5 boosters.</p>
+  <a href="booster.html" id="welcomeGo">Ouvrir mes boosters</a>
+</dialog>
 
 <footer class="site-foot">
   <nav class="legal-links" aria-label="Informations légales">
@@ -575,6 +629,7 @@ function loadActiveUser(){
   if(!activeUserId) return;
   syncUserSwitchUI();
   refreshCredits();
+  refreshPacks();
   if(window.ChartsAvatar) ChartsAvatar.refresh(activeUserId);
   if(window.ChartsNotif) ChartsNotif.refresh();
 }
@@ -585,14 +640,34 @@ function syncUserSwitchUI(){
   const nameEl = document.getElementById("playerName");
   if(nameEl) nameEl.textContent = displayName(activeUserId);
 }
+function readWallet(){
+  try { return JSON.parse(localStorage.getItem(walletKey()) || ""); }
+  catch { return null; }
+}
 function refreshCredits(){
-  let credits = 0;
-  try {
-    const data = JSON.parse(localStorage.getItem(walletKey()) || "");
-    if(data && typeof data.credits === "number") credits = data.credits;
-  } catch {}
+  const data = readWallet();
   const el = document.getElementById("creditsBal");
-  if(el) el.textContent = formatCredits(credits);
+  if(el) el.textContent = formatCredits(data && data.credits);
+}
+function refreshPacks(){
+  const data = readWallet();
+  const n = Math.max(0, Number(data && data.packs) || 0);
+  for(const id of ["packsBadge", "packTileBadge"]){
+    const badge = document.getElementById(id);
+    if(!badge) continue;
+    badge.textContent = String(n);
+    badge.hidden = n < 1;
+  }
+  const card = document.querySelector(".card-booster");
+  if(card) card.setAttribute("aria-label", n > 0 ? `Ouvrir un booster, ${n} disponibles` : "Ouvrir un booster");
+}
+function welcomeKey(){
+  return `charts.s1.${activeUserId}.welcomeSeen`;
+}
+function maybeWelcome(){
+  const dlg = document.getElementById("welcome");
+  if(!dlg || !activeUserId || localStorage.getItem(welcomeKey())) return;
+  if(!dlg.open) dlg.showModal();
 }
 function switchUser(nextId){
   if(!knownUser(nextId)) return false;
@@ -632,7 +707,26 @@ if(window.ChartsNotif){
   ChartsNotif.bind({ getUserId: () => activeUserId });
 }
 loadActiveUser();
-document.addEventListener("charts:credits-changed", () => refreshCredits());
+document.getElementById("welcome").addEventListener("cancel", ev => ev.preventDefault());
+document.getElementById("welcomeGo").addEventListener("click", () => {
+  if(activeUserId) localStorage.setItem(welcomeKey(), "1");
+});
+document.addEventListener("charts:credits-changed", () => {
+  refreshCredits();
+  refreshPacks();
+});
+document.addEventListener("charts:state", () => {
+  refreshCredits();
+  refreshPacks();
+  maybeWelcome();
+});
+if(window.ChartsState){
+  ChartsState.ready().then(() => {
+    refreshCredits();
+    refreshPacks();
+    maybeWelcome();
+  }).catch(() => {});
+}
 </script>
 </body>
 </html>
