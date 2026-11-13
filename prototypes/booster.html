@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css?v=17">
 <script src="js/site-scale.js?v=8"></script>
-<script src="js/legal-return.js"></script>
+<script src="js/legal-return.js?v=2"></script>
 <style>
   :root {
     --bg: #0d0d0d;
@@ -1609,7 +1609,7 @@
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
     <a href="classeur.html" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
-    <a href="fantasy.html?v=18">Fantasy</a>
+    <a href="fantasy.html?v=19">Arena</a>
   </nav>
   <div class="top-actions wallet" aria-label="Compte">
     <div class="notif-wrap" id="notifWrap">
@@ -1840,8 +1840,8 @@
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
 <script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=4"></script>
-<script src="js/credits-shop.js?v=6"></script>
+<script src="js/charts-state.js?v=5"></script>
+<script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=5"></script>
 <script>
@@ -1942,8 +1942,8 @@ const LINEUP_ACTS = {
 function lineupWhy(cardId, act){
   const [noun, verb] = LINEUP_ACTS[act];
   return competitionUses(null, cardId) > 0
-    ? `Carte en compétition Fantasy cette semaine — ${noun} impossible avant lundi.`
-    : `Carte dans le lineup Fantasy — retire-la du groupe pour ${verb}.`;
+    ? `Carte en compétition Arena cette semaine — ${noun} impossible avant lundi.`
+    : `Carte dans le line-up Arena — retire-la du groupe pour ${verb}.`;
 }
 function migrateLegacyUserStorage(){
   // Ancien stockage mono-joueur → Joueur A
@@ -5525,14 +5525,14 @@ function openCardZoom(card, opts={}){
     } else if(!missing && free < 1){
       bits.push(`<div class="hint">${isLineupLocked(card.id)
         ? (competitionUses(null, card.id) > 0
-          ? "En compétition Fantasy — défausse, vente et échange indisponibles avant lundi."
-          : "Lineup Fantasy — retire la carte du groupe pour défausser.")
+          ? "En compétition Arena — défausse, vente et échange indisponibles avant lundi."
+          : "Line-up Arena — retire la carte du groupe pour défausser.")
         : "Retire l’annonce pour défausser."}</div>`);
     }
     if(opts.fromAlbum && tradable >= 1 && !fav && MARKET_OPEN){
       bits.push(`<button type="button" data-act="sell" data-id="${esc(card.id)}">Vendre</button>`);
     } else if(opts.fromAlbum && !missing && free < 1 && isLineupLocked(card.id) && !fav && competitionUses(null, card.id) < 1){
-      bits.push(`<div class="hint">Lineup Fantasy — vente indisponible.</div>`);
+      bits.push(`<div class="hint">Line-up Arena — vente indisponible.</div>`);
     }
     if(waiting) bits.push(sellWaitMarkup(uid()));
     if(opts.fromAlbum && fav){

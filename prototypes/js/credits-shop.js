@@ -149,7 +149,7 @@
           `).join("")}
         </div>
         <p class="cs-note">${closed()
-          ? "Boutique fermée pendant la bêta : les crédits viennent des défausses, des ventes et des récompenses Fantasy."
+          ? "Boutique fermée pendant la bêta : les crédits viennent des défausses, des ventes et des récompenses Arena."
           : "Prototype : aucun paiement réel n’est effectué, les crédits sont ajoutés immédiatement."}</p>
       </div>
     `;

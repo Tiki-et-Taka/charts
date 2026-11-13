@@ -32,7 +32,7 @@
     acheteur_sans_credits: "L’acheteur n’a plus assez de crédits.",
     acheteur_trop_recent: "Le compte de l’acheteur est encore trop récent pour acheter.",
     exemplaire_reserve: "Exemplaire réservé par une annonce ou un échange.",
-    carte_engagee: "Carte engagée en Fantasy — retire-la du groupe, ou attends la fin de la semaine en cours.",
+    carte_engagee: "Carte engagée en Arena — retire-la du groupe, ou attends la fin de la semaine en cours.",
     poste_invalide: "Cet artiste ne peut pas occuper ce poste.",
     carte_deja_placee: "Cette carte est déjà sur un autre poste.",
     trop_de_diamants: "Un seul diamant dans le groupe.",

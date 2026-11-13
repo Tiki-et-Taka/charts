@@ -42,7 +42,7 @@
       "lobby.html": "Lobby",
       "booster.html": "Booster",
       "classeur.html": "Classeur",
-      "fantasy.html": "Fantasy"
+      "fantasy.html": "Arena"
     };
     return "← " + (names[file] || "Retour");
   }

@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Big+Shoulders+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css?v=17">
 <script src="js/site-scale.js?v=8"></script>
-<script src="js/legal-return.js"></script>
+<script src="js/legal-return.js?v=2"></script>
 <style>
   :root {
     --bg: #0d0d0d;
@@ -697,7 +697,7 @@
     <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
     <a class="on" href="classeur.html" aria-current="page">Classeur</a>
     <a href="booster.html#marche">Marché</a>
-    <a href="fantasy.html?v=18">Fantasy</a>
+    <a href="fantasy.html?v=19">Arena</a>
   </nav>
   <div class="top-actions">
     <div id="notifMount"></div>
@@ -802,8 +802,8 @@
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
 <script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=4"></script>
-<script src="js/credits-shop.js?v=6"></script>
+<script src="js/charts-state.js?v=5"></script>
+<script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=5"></script>
 <script>
@@ -1405,8 +1405,8 @@ function lineupUses(cardId){
 }
 function lineupWhy(cardId){
   return competitionUses(cardId) > 0
-    ? "Carte en compétition Fantasy cette semaine — vente et échange impossibles avant lundi."
-    : "Carte dans le lineup Fantasy — retire-la du groupe pour la vendre.";
+    ? "Carte en compétition Arena cette semaine — vente et échange impossibles avant lundi."
+    : "Carte dans le line-up Arena — retire-la du groupe pour la vendre.";
 }
 function myListings(cardId){
   return (loadMarket().listings || []).filter(l => l.seller === activeUserId && l.cardId === cardId);
@@ -1571,8 +1571,8 @@ function paintZoomActions(){
     bits.push(`<button type="button" data-act="sell">Vendre</button>`);
   } else if(freeCopies(zoomCardId) < 1 && lineupUses(zoomCardId) > 0){
     bits.push(`<p class="hint">${competitionUses(zoomCardId) > 0
-      ? "En compétition Fantasy — vente et échange indisponibles avant lundi."
-      : "Lineup Fantasy — vente indisponible."}</p>`);
+      ? "En compétition Arena — vente et échange indisponibles avant lundi."
+      : "Line-up Arena — vente indisponible."}</p>`);
   }
   if(listed.length){
     bits.push(`<p class="hint">En vente · ${listed[0].price} cr${listed.length > 1 ? ` · ${listed.length} annonces` : ""}</p>`);
@@ -1616,7 +1616,7 @@ function originText(o){
   if(o.k === "trade"){
     return o.for ? `Échangé contre ${String(o.for)}` : "Reçu par échange";
   }
-  if(o.k === "reward") return "Récompense Fantasy";
+  if(o.k === "reward") return "Récompense Arena";
   return "Ouvert dans un booster";
 }
 
