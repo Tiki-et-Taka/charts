@@ -336,7 +336,7 @@
     min-width: 0;
     z-index: 1;
   }
-  .slot.open { z-index: 8; }
+  .slot.open { z-index: 41; }
   .slot-head {
     display: flex;
     justify-content: space-between;
@@ -546,6 +546,10 @@
     min-width: 220px;
     width: max(100%, 240px);
   }
+  .slot-menu.up {
+    top: auto;
+    bottom: calc(100% + 6px);
+  }
   .slot-menu[hidden] { display: none !important; }
   .slot-menu-filters {
     display: grid;
@@ -570,6 +574,7 @@
   .slot-menu-list {
     max-height: 200px;
     overflow: auto;
+    padding-bottom: 12px;
   }
   .slot-menu-list button {
     appearance: none;
@@ -1242,6 +1247,28 @@ function refreshOpenMenuList(){
   if(!openSlot) return;
   const list = document.querySelector(`.slot-menu[data-menu="${openSlot}"] [data-menu-list]`);
   if(list) list.innerHTML = menuListHtml(openSlot);
+  placeOpenMenu();
+}
+
+function placeOpenMenu(){
+  const menu = document.querySelector(`.slot-menu[data-menu="${openSlot}"]`);
+  if(!menu || menu.hidden) return;
+  const list = menu.querySelector("[data-menu-list]");
+  const slot = menu.closest(".slot");
+  if(!list || !slot) return;
+  menu.classList.remove("up");
+  list.style.maxHeight = "";
+  const slotRect = slot.getBoundingClientRect();
+  const foot = document.querySelector("footer.site-foot");
+  const footTop = foot ? foot.getBoundingClientRect().top : slotRect.bottom + 400;
+  const spaceBelow = footTop - slotRect.bottom - 8;
+  const spaceAbove = slotRect.top - 12;
+  const filters = menu.querySelector(".slot-menu-filters");
+  const filtersH = filters ? filters.offsetHeight : 0;
+  const goUp = spaceBelow < 180 && spaceAbove > spaceBelow;
+  menu.classList.toggle("up", goUp);
+  const avail = (goUp ? spaceAbove : spaceBelow) - filtersH - 10;
+  list.style.maxHeight = Math.max(72, Math.min(320, avail)) + "px";
 }
 
 function renderSlots(){
@@ -1302,7 +1329,10 @@ function renderSlots(){
   scaleSlotCards();
   if(openSlot){
     const menu = document.querySelector(`.slot-menu[data-menu="${openSlot}"]`);
-    if(menu) menu.hidden = false;
+    if(menu){
+      menu.hidden = false;
+      requestAnimationFrame(placeOpenMenu);
+    }
   }
 
   const missing = SLOTS.filter(s => !lu.slots[s.key]).map(s => s.role);
@@ -1521,7 +1551,10 @@ document.addEventListener("keydown", ev => {
   }
 });
 setInterval(renderLockClock, 30000);
-window.addEventListener("resize", scaleSlotCards);
+window.addEventListener("resize", () => {
+  scaleSlotCards();
+  placeOpenMenu();
+});
 
 async function boot(){
   activeUserId = ChartsAccounts.session();
