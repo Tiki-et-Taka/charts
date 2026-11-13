@@ -336,7 +336,11 @@
     min-width: 0;
     z-index: 1;
   }
-  .slot.open { z-index: 41; }
+  .slot.open .slot-card,
+  .slot.open .slot-shell {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
+  }
   .slot-head {
     display: flex;
     justify-content: space-between;
@@ -533,33 +537,62 @@
   .card.diamant .marks { color: rgba(232,213,163,.55); }
   .frame { position: absolute; inset: 0; pointer-events: none; }
 
-  .slot-menu {
-    position: absolute;
-    left: 0; right: 0;
-    top: calc(100% + 6px);
-    z-index: 9;
-    border: 1px solid var(--line-hi);
-    background: #121212;
-    box-shadow: 0 14px 28px rgba(0,0,0,.5);
+  .pick-veil {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 38;
+  }
+  .pick-veil[hidden],
+  .pick-panel[hidden] { display: none !important; }
+  .pick-panel {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(440px, 94vw);
+    z-index: 41;
     display: flex;
     flex-direction: column;
-    min-width: 220px;
-    width: max(100%, 240px);
+    background: #121212;
+    border-left: 1px solid var(--line-hi);
+    box-shadow: -18px 0 40px rgba(0,0,0,.45);
+    padding: 16px 16px 40px;
   }
-  .slot-menu.up {
-    top: auto;
-    bottom: calc(100% + 6px);
+  .pick-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex: 0 0 auto;
   }
-  .slot-menu[hidden] { display: none !important; }
-  .slot-menu-filters {
+  .pick-kicker {
+    margin: 0 0 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .pick-head h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .pick-close {
+    appearance: none; border: 0; background: transparent;
+    color: var(--muted); font-size: 28px; line-height: 1; cursor: pointer;
+    padding: 0 4px;
+  }
+  .pick-close:hover { color: var(--ink); }
+  .pick-filters {
     display: grid;
     gap: 6px;
-    padding: 8px;
-    border-bottom: 1px solid var(--line);
-    background: #0f0f0f;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
   }
-  .slot-menu-filters input,
-  .slot-menu-filters select {
+  .pick-filters input,
+  .pick-filters select {
     appearance: none;
     width: 100%;
     border: 1px solid var(--line);
@@ -568,41 +601,78 @@
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: .04em;
-    padding: 7px 8px;
+    padding: 8px;
   }
-  .slot-menu-filters input::placeholder { color: #5a5650; }
-  .slot-menu-list {
-    max-height: 200px;
-    overflow: auto;
-    padding-bottom: 12px;
-  }
-  .slot-menu-list button {
+  .pick-filters input::placeholder { color: #5a5650; }
+  .pick-clear {
     appearance: none;
-    display: block;
     width: 100%;
-    border: 0;
-    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
     background: transparent;
-    color: var(--ink);
-    font: inherit;
-    font-size: 12px;
-    text-align: left;
-    padding: 9px 10px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 8px;
     cursor: pointer;
   }
-  .slot-menu-list button:last-child { border-bottom: 0; }
-  .slot-menu-list button:hover { background: #1a1a1a; }
-  .slot-menu .sub {
-    display: block;
-    margin-top: 2px;
+  .pick-clear:hover { color: var(--danger); border-color: var(--danger); }
+  .pick-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 10px;
+    align-content: start;
+    padding-bottom: 16px;
+  }
+  .pick-item {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    min-width: 0;
+  }
+  .pick-item:hover,
+  .pick-item.on { border-color: var(--accent); }
+  .pick-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 260 / 364;
+  }
+  .pick-thumb .card {
+    position: absolute; top: 0; left: 0;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .pick-name {
+    font-family: Oswald, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.15;
+  }
+  .pick-sub {
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--muted);
   }
-  .slot-menu .empty {
-    padding: 12px 10px;
+  .pick-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 18px 8px;
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: .06em;
@@ -764,6 +834,24 @@
     </nav>
   </footer>
 </main>
+
+<div class="pick-veil" id="pickVeil" hidden></div>
+<aside class="pick-panel" id="pickPanel" hidden role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <div class="pick-head">
+    <div>
+      <p class="pick-kicker">Choisir pour le poste</p>
+      <h2 id="pickTitle">Voix</h2>
+    </div>
+    <button type="button" class="pick-close" id="pickClose" aria-label="Fermer">×</button>
+  </div>
+  <div class="pick-filters">
+    <input type="search" id="pickQ" placeholder="Rechercher…" autocomplete="off">
+    <select id="pickRare" aria-label="Rareté"><option value="">Toutes les raretés</option></select>
+    <select id="pickGenre" aria-label="Genre"><option value="">Tous les genres</option></select>
+  </div>
+  <div id="pickClearWrap"></div>
+  <div class="pick-list" id="pickList"></div>
+</aside>
 
 <div class="drawer-veil" id="drawerVeil" hidden></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
@@ -1201,74 +1289,106 @@ function candidatesForSlot(slotKey){
   }).sort((a, b) => a.name.localeCompare(b.name, "fr"));
 }
 
-function menuListHtml(slotKey){
+function pickListHtml(slotKey){
   const list = candidatesForSlot(slotKey);
   const current = loadLineup().slots[slotKey];
-  const clear = current
-    ? `<button type="button" data-clear="${esc(slotKey)}">Retirer</button>`
-    : "";
   if(!list.length){
-    return `${clear}<p class="empty">${
+    return `<p class="pick-empty">${
       menuQ || menuRare || menuGenre
         ? "Aucun résultat pour ce filtre"
         : "Aucun artiste libre pour ce poste"
     }</p>`;
   }
-  return clear + list.slice(0, 60).map(c =>
-    `<button type="button" data-pick="${esc(slotKey)}" data-id="${esc(c.id)}">
-      ${esc(c.name)}
-      <span class="sub">${esc((c.instruments || [c.instrument]).map(i => INSTR[i] || i).join(" · "))} · ${esc(TIERS[c.rarete].label)}${c.famille && FAMILIES[c.famille] ? " · " + esc(FAMILIES[c.famille].label) : ""}</span>
-    </button>`
-  ).join("");
+  return list.slice(0, 80).map(c => {
+    const sub = `${(c.instruments || [c.instrument]).map(i => INSTR[i] || i).join(" · ")} · ${TIERS[c.rarete].label}${c.famille && FAMILIES[c.famille] ? " · " + FAMILIES[c.famille].label : ""}`;
+    return `<button type="button" class="pick-item${c.id === current ? " on" : ""}" data-pick="${esc(slotKey)}" data-id="${esc(c.id)}">
+      <span class="pick-thumb">${renderCard(c)}</span>
+      <span class="pick-name">${esc(c.name)}</span>
+      <span class="pick-sub">${esc(sub)}</span>
+    </button>`;
+  }).join("");
 }
 
-function menuHtml(slotKey){
-  return `<div class="slot-menu" data-menu="${esc(slotKey)}" hidden>
-    <div class="slot-menu-filters">
-      <input type="search" data-menu-q placeholder="Rechercher…" value="${esc(menuQ)}" autocomplete="off">
-      <select data-menu-rare aria-label="Rareté">
-        <option value="">Toutes les raretés</option>
-        ${[...RARE_ORDER].reverse().map(r =>
-          `<option value="${esc(r)}"${menuRare === r ? " selected" : ""}>${esc(TIERS[r].label)}</option>`
-        ).join("")}
-      </select>
-      <select data-menu-genre aria-label="Genre">
-        <option value="">Tous les genres</option>
-        ${GENRE_ORDER.map(g =>
-          `<option value="${esc(g)}"${menuGenre === g ? " selected" : ""}>${esc(FAMILIES[g].label)}</option>`
-        ).join("")}
-      </select>
-    </div>
-    <div class="slot-menu-list" data-menu-list>${menuListHtml(slotKey)}</div>
-  </div>`;
+function scalePickCards(){
+  document.querySelectorAll("#pickList .pick-thumb").forEach(thumb => {
+    const card = thumb.querySelector(".card");
+    if(!card) return;
+    const w = thumb.clientWidth;
+    if(w < 1) return;
+    card.style.transform = `scale(${w / 260})`;
+  });
 }
 
-function refreshOpenMenuList(){
-  if(!openSlot) return;
-  const list = document.querySelector(`.slot-menu[data-menu="${openSlot}"] [data-menu-list]`);
-  if(list) list.innerHTML = menuListHtml(openSlot);
-  placeOpenMenu();
+function fillPickFilters(){
+  const rare = $("pickRare");
+  const genre = $("pickGenre");
+  if(rare.options.length > 1) return;
+  for(const r of [...RARE_ORDER].reverse()){
+    rare.append(new Option(TIERS[r].label, r));
+  }
+  for(const g of GENRE_ORDER){
+    genre.append(new Option(FAMILIES[g].label, g));
+  }
 }
 
-function placeOpenMenu(){
-  const menu = document.querySelector(`.slot-menu[data-menu="${openSlot}"]`);
-  if(!menu || menu.hidden) return;
-  const list = menu.querySelector("[data-menu-list]");
-  const slot = menu.closest(".slot");
-  if(!list || !slot) return;
-  menu.classList.remove("up");
-  list.style.maxHeight = "";
-  const slotRect = slot.getBoundingClientRect();
-  const foot = document.querySelector("footer.site-foot");
-  const footTop = foot ? foot.getBoundingClientRect().top : slotRect.bottom + 400;
-  const spaceBelow = footTop - slotRect.bottom - 8;
-  const spaceAbove = slotRect.top - 12;
-  const filters = menu.querySelector(".slot-menu-filters");
-  const filtersH = filters ? filters.offsetHeight : 0;
-  const goUp = spaceBelow < 180 && spaceAbove > spaceBelow;
-  menu.classList.toggle("up", goUp);
-  const avail = (goUp ? spaceAbove : spaceBelow) - filtersH - 10;
-  list.style.maxHeight = Math.max(72, Math.min(320, avail)) + "px";
+function renderPickPanel(){
+  const panel = $("pickPanel");
+  const veil = $("pickVeil");
+  if(!openSlot){
+    panel.hidden = true;
+    veil.hidden = true;
+    return;
+  }
+  fillPickFilters();
+  const slot = SLOTS.find(s => s.key === openSlot);
+  $("pickTitle").textContent = slot ? `${slot.num} · ${slot.role}` : "Choisir";
+  $("pickQ").value = menuQ;
+  $("pickRare").value = menuRare;
+  $("pickGenre").value = menuGenre;
+  const current = loadLineup().slots[openSlot];
+  $("pickClearWrap").innerHTML = current
+    ? `<button type="button" class="pick-clear" data-clear="${esc(openSlot)}">Retirer du poste</button>`
+    : "";
+  $("pickList").innerHTML = pickListHtml(openSlot);
+  $("pickList").querySelectorAll(".art img").forEach(imgFallback);
+  panel.hidden = false;
+  veil.hidden = false;
+  requestAnimationFrame(scalePickCards);
+}
+
+function refreshPickList(){
+  if(!openSlot || $("pickPanel").hidden) return;
+  const current = loadLineup().slots[openSlot];
+  $("pickClearWrap").innerHTML = current
+    ? `<button type="button" class="pick-clear" data-clear="${esc(openSlot)}">Retirer du poste</button>`
+    : "";
+  $("pickList").innerHTML = pickListHtml(openSlot);
+  $("pickList").querySelectorAll(".art img").forEach(imgFallback);
+  requestAnimationFrame(scalePickCards);
+}
+
+function closePick(){
+  openSlot = null;
+  resetMenuFilters();
+  document.querySelectorAll(".slot.open").forEach(el => el.classList.remove("open"));
+  document.querySelectorAll("[data-toggle]").forEach(btn => btn.setAttribute("aria-expanded", "false"));
+  renderPickPanel();
+}
+
+function openPick(slotKey){
+  setMenuOpen(false);
+  openSlot = slotKey;
+  resetMenuFilters();
+  document.querySelectorAll(".slot").forEach(el => {
+    const on = el.dataset.slot === slotKey;
+    el.classList.toggle("open", on);
+    el.querySelectorAll("[data-toggle]").forEach(btn => {
+      btn.setAttribute("aria-expanded", on ? "true" : "false");
+    });
+  });
+  renderPickPanel();
+  const q = $("pickQ");
+  if(q) q.focus();
 }
 
 function renderSlots(){
@@ -1303,7 +1423,6 @@ function renderSlots(){
             <div class="vacant-copy">${esc(slot.vacant)}</div>
           </button>
         </div>
-        ${menuHtml(slot.key)}
       </article>`;
     }
     const listenBit = week
@@ -1322,18 +1441,11 @@ function renderSlots(){
         </div>
         <button type="button" class="slot-act" data-toggle="${esc(slot.key)}" aria-expanded="${isOpen ? "true" : "false"}" ${canEdit ? "" : "disabled"}>Changer</button>
       </div>
-      ${menuHtml(slot.key)}
     </article>`;
   }).join("");
   $("slots").querySelectorAll(".art img").forEach(imgFallback);
   scaleSlotCards();
-  if(openSlot){
-    const menu = document.querySelector(`.slot-menu[data-menu="${openSlot}"]`);
-    if(menu){
-      menu.hidden = false;
-      requestAnimationFrame(placeOpenMenu);
-    }
-  }
+  renderPickPanel();
 
   const missing = SLOTS.filter(s => !lu.slots[s.key]).map(s => s.role);
   const hints = [];
@@ -1423,62 +1535,39 @@ function refreshAll(){
 
 /* events */
 $("slots").addEventListener("click", ev => {
-  if(ev.target.closest(".slot-menu-filters")) ev.stopPropagation();
-  const pick = ev.target.closest("[data-pick]");
-  if(pick){
-    ev.stopPropagation();
-    setSlot(pick.dataset.pick, pick.dataset.id);
-    return;
-  }
-  const clear = ev.target.closest("[data-clear]");
-  if(clear){
-    ev.stopPropagation();
-    setSlot(clear.dataset.clear, null);
-    return;
-  }
   const toggle = ev.target.closest("[data-toggle]");
   if(!toggle || toggle.disabled) return;
   ev.stopPropagation();
   const key = toggle.dataset.toggle;
-  if(openSlot === key){
-    openSlot = null;
-    resetMenuFilters();
-  } else {
-    openSlot = key;
-    resetMenuFilters();
-  }
-  renderSlots();
-  if(openSlot){
-    const q = document.querySelector(`.slot-menu[data-menu="${openSlot}"] [data-menu-q]`);
-    if(q) q.focus();
-  }
+  if(openSlot === key) closePick();
+  else openPick(key);
 });
-$("slots").addEventListener("input", ev => {
-  const q = ev.target.closest("[data-menu-q]");
-  if(!q || !openSlot) return;
-  menuQ = q.value || "";
-  refreshOpenMenuList();
-});
-$("slots").addEventListener("change", ev => {
-  const rare = ev.target.closest("[data-menu-rare]");
-  if(rare && openSlot){
-    menuRare = rare.value || "";
-    refreshOpenMenuList();
+$("pickPanel").addEventListener("click", ev => {
+  const pick = ev.target.closest("[data-pick]");
+  if(pick){
+    setSlot(pick.dataset.pick, pick.dataset.id);
     return;
   }
-  const genre = ev.target.closest("[data-menu-genre]");
-  if(genre && openSlot){
-    menuGenre = genre.value || "";
-    refreshOpenMenuList();
-  }
+  const clear = ev.target.closest("[data-clear]");
+  if(clear) setSlot(clear.dataset.clear, null);
 });
-document.addEventListener("click", ev => {
-  if(openSlot && !ev.target.closest(".slot")){
-    openSlot = null;
-    resetMenuFilters();
-    renderSlots();
-  }
+$("pickQ").addEventListener("input", () => {
+  if(!openSlot) return;
+  menuQ = $("pickQ").value || "";
+  refreshPickList();
 });
+$("pickRare").addEventListener("change", () => {
+  if(!openSlot) return;
+  menuRare = $("pickRare").value || "";
+  refreshPickList();
+});
+$("pickGenre").addEventListener("change", () => {
+  if(!openSlot) return;
+  menuGenre = $("pickGenre").value || "";
+  refreshPickList();
+});
+$("pickClose").addEventListener("click", () => closePick());
+$("pickVeil").addEventListener("click", () => closePick());
 
 $("btnLock").addEventListener("click", async () => {
   const lu = loadLineup();
@@ -1522,6 +1611,7 @@ const menuBtn = $("menuBtn");
 const drawer = $("drawer");
 const veil = $("drawerVeil");
 function setMenuOpen(open){
+  if(open) closePick();
   menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
   drawer.hidden = !open;
   veil.hidden = !open;
@@ -1543,9 +1633,8 @@ function switchUser(nextId){
 document.addEventListener("keydown", ev => {
   if(ev.key === "Escape"){
     if(openSlot){
-      openSlot = null;
-      resetMenuFilters();
-      renderSlots();
+      closePick();
+      return;
     }
     setMenuOpen(false);
   }
@@ -1553,7 +1642,7 @@ document.addEventListener("keydown", ev => {
 setInterval(renderLockClock, 30000);
 window.addEventListener("resize", () => {
   scaleSlotCards();
-  placeOpenMenu();
+  scalePickCards();
 });
 
 async function boot(){
