@@ -741,7 +741,7 @@
     <div class="filt-row">
       <span class="filt-label">Recherche</span>
       <input class="filt-search" type="search" id="q" placeholder="Nom ou groupe" autocomplete="off">
-      <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Masquer manquantes</button>
+      <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Afficher manquantes</button>
       <button type="button" class="fchip" id="newOnly" aria-pressed="false">Nouvelles</button>
       <button type="button" class="fchip" id="seeAllNew" hidden>Tout voir</button>
       <button type="button" class="fchip" id="favOnly" aria-pressed="false">Favoris</button>
@@ -857,7 +857,7 @@ let filterRare = "";
 let filterInstr = "";
 let filterGenre = "";
 let filterQ = "";
-let hideMissing = false;
+let hideMissing = true;
 let newOnly = false;
 let favOnly = false;
 let sortBy = "num";
@@ -1701,10 +1701,22 @@ $("q").addEventListener("input", () => {
     render();
   }, 120);
 });
+function setHideMissing(on){
+  hideMissing = on;
+  $("hideMissing").classList.toggle("on", !on);
+  $("hideMissing").setAttribute("aria-pressed", on ? "false" : "true");
+}
 $("hideMissing").addEventListener("click", () => {
-  hideMissing = !hideMissing;
-  $("hideMissing").classList.toggle("on", hideMissing);
-  $("hideMissing").setAttribute("aria-pressed", hideMissing ? "true" : "false");
+  setHideMissing(!hideMissing);
+  if(!hideMissing){
+    for(const id of ["newOnly", "favOnly"]){
+      $(id).classList.remove("on");
+      $(id).setAttribute("aria-pressed", "false");
+    }
+    newOnly = false;
+    favOnly = false;
+    syncSeeAllNewBtn();
+  }
   page = 1;
   render();
 });
@@ -1712,11 +1724,7 @@ $("newOnly").addEventListener("click", () => {
   newOnly = !newOnly;
   $("newOnly").classList.toggle("on", newOnly);
   $("newOnly").setAttribute("aria-pressed", newOnly ? "true" : "false");
-  if(newOnly){
-    hideMissing = true;
-    $("hideMissing").classList.add("on");
-    $("hideMissing").setAttribute("aria-pressed", "true");
-  }
+  if(newOnly) setHideMissing(true);
   page = 1;
   render();
 });
@@ -1735,11 +1743,7 @@ $("favOnly").addEventListener("click", () => {
   favOnly = !favOnly;
   $("favOnly").classList.toggle("on", favOnly);
   $("favOnly").setAttribute("aria-pressed", favOnly ? "true" : "false");
-  if(favOnly){
-    hideMissing = true;
-    $("hideMissing").classList.add("on");
-    $("hideMissing").setAttribute("aria-pressed", "true");
-  }
+  if(favOnly) setHideMissing(true);
   page = 1;
   render();
 });
