@@ -749,7 +749,7 @@
     <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
     <a href="classeur.html">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <a href="booster.html#marche">Marché</a>
-    <a class="on" href="fantasy.html?v=16" aria-current="page">Fantasy</a>
+    <a class="on" href="fantasy.html?v=18" aria-current="page">Fantasy</a>
   </nav>
   <div class="top-actions">
     <div id="notifMount"></div>
@@ -766,7 +766,7 @@
 </header>
 
 <main class="wrap">
-  <a class="back" href="fantasy.html?v=16">← Retour aux compétitions</a>
+  <a class="back" href="fantasy.html?v=18">← Retour aux compétitions</a>
 
   <section class="hero" aria-label="Compétition">
     <div>
@@ -1589,7 +1589,7 @@ $("btnLock").addEventListener("click", async () => {
       return;
     }
     editSession = false;
-    location.href = "fantasy.html?v=17";
+    location.href = "fantasy.html?v=18";
     return;
   }
   lu.locked = true;
@@ -1597,7 +1597,7 @@ $("btnLock").addEventListener("click", async () => {
   lu.weekStart = ChartsHistory.nextWeekStart();
   saveLineup(lu);
   editSession = false;
-  location.href = "fantasy.html?v=17";
+  location.href = "fantasy.html?v=18";
 });
 $("btnUnlock").addEventListener("click", () => {
   const lu = loadLineup();
