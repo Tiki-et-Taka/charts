@@ -680,10 +680,34 @@ function freshCount(){
 function welcomeKey(){
   return `charts.s1.${activeUserId}.welcomeSeen`;
 }
+function markWelcomeSeen(){
+  if(activeUserId) localStorage.setItem(welcomeKey(), "1");
+}
+function isFirstVisit(){
+  if(!activeUserId) return false;
+  try {
+    const owned = JSON.parse(localStorage.getItem(`charts.s1.${activeUserId}.owned`) || "");
+    if(owned && owned.got && Object.keys(owned.got).length) return false;
+  } catch {}
+  const w = readWallet();
+  if(w && Number(w.credits) > 0) return false;
+  const packs = Math.max(0, Number(w && w.packs) || 0);
+  if(packs !== 5) return false;
+  const created = Number(w && w.createdAt) || 0;
+  if(created && Date.now() - created > 6 * 60 * 60 * 1000) return false;
+  return true;
+}
 function maybeWelcome(){
   const dlg = document.getElementById("welcome");
-  if(!dlg || !activeUserId || localStorage.getItem(welcomeKey())) return;
+  if(!dlg || !activeUserId) return;
+  if(localStorage.getItem(welcomeKey())) return;
+  if(!isFirstVisit()){
+    markWelcomeSeen();
+    if(dlg.open) dlg.close();
+    return;
+  }
   if(!dlg.open) dlg.showModal();
+  markWelcomeSeen();
 }
 function switchUser(nextId){
   if(!knownUser(nextId)) return false;
@@ -724,9 +748,7 @@ if(window.ChartsNotif){
 }
 loadActiveUser();
 document.getElementById("welcome").addEventListener("cancel", ev => ev.preventDefault());
-document.getElementById("welcomeGo").addEventListener("click", () => {
-  if(activeUserId) localStorage.setItem(welcomeKey(), "1");
-});
+document.getElementById("welcomeGo").addEventListener("click", () => markWelcomeSeen());
 document.addEventListener("charts:credits-changed", () => {
   refreshCredits();
   refreshPacks();
