@@ -177,6 +177,12 @@
   .fchip.on {
     color: var(--accent-ink); background: var(--accent); border-color: var(--accent);
   }
+  .fchip:disabled {
+    opacity: .4;
+    cursor: default;
+  }
+  .fchip:disabled:hover { color: var(--muted); border-color: var(--line); }
+  .filt-mark-seen { margin-left: auto; }
   .filt-sort {
     margin-left: auto;
     display: flex; align-items: center; gap: 8px;
@@ -743,8 +749,8 @@
       <input class="filt-search" type="search" id="q" placeholder="Nom ou groupe" autocomplete="off">
       <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Afficher manquantes</button>
       <button type="button" class="fchip" id="newOnly" aria-pressed="false">Nouvelles</button>
-      <button type="button" class="fchip" id="seeAllNew" hidden>Tout voir</button>
       <button type="button" class="fchip" id="favOnly" aria-pressed="false">Favoris</button>
+      <button type="button" class="fchip filt-mark-seen" id="seeAllNew">Tout marqué comme vu</button>
     </div>
   </section>
 
@@ -1049,18 +1055,9 @@ function clearAllFresh(){
 }
 function syncSeeAllNewBtn(){
   const btn = $("seeAllNew");
-  if(!btn) return;
-  const hide = !newOnly || freshCount() < 1;
-  if(hide === !!btn.hidden) return;
-  if(hide){
-    btn.style.pointerEvents = "none";
-    setTimeout(() => {
-      btn.hidden = true;
-      btn.style.pointerEvents = "";
-    }, 0);
-  } else {
-    btn.hidden = false;
-  }
+  if(!btn || profileUserId) return;
+  btn.hidden = false;
+  btn.disabled = freshCount() < 1;
 }
 function formatCredits(n){ return Number(n || 0).toLocaleString("fr-FR"); }
 function refreshCredits(){
