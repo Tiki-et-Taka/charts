@@ -1425,8 +1425,8 @@ function renderSlots(){
         </div>
       </article>`;
     }
-    const listenBit = week
-      ? `<span class="slot-listen">${week.parts[slot.key].hot ? '<span class="slot-hot" title="En forme : +10 %">En forme</span> ' : ""}${ChartsListens.formatForm(week.parts[slot.key].form)}</span>`
+    const listenBit = week && week.parts[slot.key].hot
+      ? `<span class="slot-listen"><span class="slot-hot" title="En forme : +10 %">En forme</span></span>`
       : "";
     const showRhythmPen = slot.key === "ryt2" && alchemy.rhythmPenalty;
     return `<article class="slot${isOpen ? " open" : ""}" data-slot="${slot.key}">
