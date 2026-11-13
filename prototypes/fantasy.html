@@ -433,7 +433,7 @@
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a href="classeur.html">Classeur</a>
+    <a href="classeur.html">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <a href="booster.html#marche">Marché</a>
     <a class="on" href="fantasy.html?v=16" aria-current="page">Fantasy</a>
   </nav>
@@ -806,6 +806,17 @@ function refreshCredits(){
   if(badge){
     badge.textContent = String(packs);
     badge.hidden = packs < 1;
+  }
+  let fresh = 0;
+  try {
+    const owned = JSON.parse(localStorage.getItem(`charts.s1.${activeUserId}.owned`) || "");
+    const got = (owned && owned.got) || {};
+    fresh = Object.keys((owned && owned.fresh) || {}).filter(id => got[id]).length;
+  } catch {}
+  const albumBadge = $("albumNewBadge");
+  if(albumBadge){
+    albumBadge.textContent = String(fresh);
+    albumBadge.hidden = fresh < 1;
   }
 }
 

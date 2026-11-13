@@ -245,7 +245,7 @@
     0%, 100% { color: #fff; }
     50% { color: var(--accent); }
   }
-  .card-classeur { grid-column: 1; grid-row: 2; }
+  .card-classeur { position: relative; grid-column: 1; grid-row: 2; }
   .card-classeur .card-art { background-image: url("img/lobby/classeur.jpg?v=5"); }
   .card-marche { grid-column: 2; grid-row: 2; }
   .card-marche .card-art { background-image: url("img/lobby/marche.jpg?v=5"); }
@@ -471,7 +471,8 @@
     pointer-events: none;
   }
   .nav-badge[hidden] { display: none; }
-  .card-booster .nav-badge {
+  .card-booster .nav-badge,
+  .card-classeur .nav-badge {
     top: 12px; right: 12px; z-index: 4;
     min-width: 22px; height: 22px; line-height: 22px;
     font-size: 12px;
@@ -515,7 +516,7 @@
   <nav class="nav-main" aria-label="Principal">
     <a class="on" href="lobby.html" aria-current="page">Lobby</a>
     <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a href="classeur.html">Classeur</a>
+    <a href="classeur.html">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <a href="booster.html#marche">Marché</a>
     <a href="fantasy.html?v=16">Fantasy</a>
   </nav>
@@ -545,6 +546,7 @@
       </div>
     </a>
     <a class="card card-classeur" href="classeur.html">
+      <span class="nav-badge" id="albumTileBadge" hidden>0</span>
       <div class="card-art" role="img" aria-label=""></div>
       <div class="card-body">
         <h2 class="card-title">Classeur</h2>
@@ -660,6 +662,20 @@ function refreshPacks(){
   }
   const card = document.querySelector(".card-booster");
   if(card) card.setAttribute("aria-label", n > 0 ? `Ouvrir un booster, ${n} disponibles` : "Ouvrir un booster");
+  const fresh = freshCount();
+  for(const id of ["albumNewBadge", "albumTileBadge"]){
+    const badge = document.getElementById(id);
+    if(!badge) continue;
+    badge.textContent = String(fresh);
+    badge.hidden = fresh < 1;
+  }
+}
+function freshCount(){
+  try {
+    const data = JSON.parse(localStorage.getItem(`charts.s1.${activeUserId}.owned`) || "");
+    const got = (data && data.got) || {};
+    return Object.keys((data && data.fresh) || {}).filter(id => got[id]).length;
+  } catch { return 0; }
 }
 function welcomeKey(){
   return `charts.s1.${activeUserId}.welcomeSeen`;
