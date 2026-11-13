@@ -79,6 +79,19 @@
     content: ""; position: absolute; left: 0; right: 0; bottom: 0;
     height: 2px; background: var(--accent);
   }
+  .nav-badge {
+    position: absolute;
+    top: -7px; right: -14px;
+    min-width: 15px; height: 15px; padding: 0 4px;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 500; line-height: 15px;
+    text-align: center;
+    letter-spacing: 0;
+    text-transform: none;
+    pointer-events: none;
+  }
+  .nav-badge[hidden] { display: none; }
   .top-actions {
     justify-self: end; display: flex; align-items: center; gap: 8px;
   }
@@ -675,7 +688,7 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html">Booster</a>
+    <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
     <a class="on" href="classeur.html" aria-current="page">Classeur</a>
     <a href="booster.html#marche">Marché</a>
     <a href="fantasy.html?v=16">Fantasy</a>
@@ -1050,12 +1063,18 @@ function syncSeeAllNewBtn(){
 }
 function formatCredits(n){ return Number(n || 0).toLocaleString("fr-FR"); }
 function refreshCredits(){
-  let credits = 0;
+  let credits = 0, packs = 0;
   try {
     const data = JSON.parse(localStorage.getItem(walletKey()) || "");
     if(data && typeof data.credits === "number") credits = data.credits;
+    packs = Math.max(0, Number(data && data.packs) || 0);
   } catch {}
   $("creditsBal").textContent = formatCredits(credits);
+  const badge = $("packsBadge");
+  if(badge){
+    badge.textContent = String(packs);
+    badge.hidden = packs < 1;
+  }
 }
 function loadActiveUser(){
   activeUserId = ChartsAccounts.session();
