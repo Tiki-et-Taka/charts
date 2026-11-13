@@ -642,7 +642,7 @@ function renderCard(card){
   const cls = `card r${tier.rank}${paper ? " paper" : ""}${diamant ? " diamant" : ""}`;
   const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" data-id="${esc(card.id)}">
-    <div class="art"><img src="../out/illustrations/${esc(card.job)}.png" alt="" loading="lazy"></div>
+    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp" alt="" loading="lazy"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
       <div class="accent" style="background:${fam.a1}"></div>
@@ -763,7 +763,7 @@ function imgFallback(el){
   el.onerror = function(){
     this.onerror = function(){
       this.onerror = null;
-      const m = this.src.replace("_x.png", "_m.png");
+      const m = this.src.replace("_x.webp", "_m.webp");
       if(m !== this.src) this.src = m;
     };
     const s = this.src;
@@ -771,7 +771,7 @@ function imgFallback(el){
     if(n !== s) this.src = n;
     else {
       this.onerror = null;
-      const m = s.replace("_x.png", "_m.png");
+      const m = s.replace("_x.webp", "_m.webp");
       if(m !== s) this.src = m;
     }
   };

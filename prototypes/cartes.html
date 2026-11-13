@@ -303,7 +303,7 @@ function renderCard(card, opts={}){
   const mythName = n > 16 ? 22 : n > 13 ? 26 : n > 10 ? 30 : 34;
   return `<div class="${cls}" tabindex="${opts.zoomable===false?"-1":"0"}" data-name="${card.name}">
     <div class="art">
-      <img src="../out/illustrations/${card.job}.png" alt="" onerror="this.onerror=function(){this.onerror=null;var m=this.src.replace('_x.png','_m.png');if(m!==this.src)this.src=m;};var s=this.src,n=s.indexOf('_B_')>=0?s.replace('_B_','_A_'):s.replace('_A_','_B_');if(n!==s)this.src=n;else{this.onerror=null;var m=s.replace('_x.png','_m.png');if(m!==s)this.src=m;}">
+      <img src="../out/illustrations/webp/${card.job}.webp" alt="" onerror="this.onerror=function(){this.onerror=null;var m=this.src.replace('_x.webp','_m.webp');if(m!==this.src)this.src=m;};var s=this.src,n=s.indexOf('_B_')>=0?s.replace('_B_','_A_'):s.replace('_A_','_B_');if(n!==s)this.src=n;else{this.onerror=null;var m=s.replace('_x.webp','_m.webp');if(m!==s)this.src=m;}">
     </div>
     ${mythique ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${card.name}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
