@@ -655,7 +655,7 @@ function renderCard(card){
   const cls = `card r${tier.rank}${paper ? " paper" : ""}${diamant ? " diamant" : ""}`;
   const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" data-id="${esc(card.id)}">
-    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=2" alt="" loading="lazy"></div>
+    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=3" alt="" loading="lazy"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
       <div class="accent" style="background:${fam.a1}"></div>
