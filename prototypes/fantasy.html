@@ -432,10 +432,10 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a href="classeur.html">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
-    <a href="booster.html#marche">Marché</a>
-    <a class="on" href="fantasy.html?v=19" aria-current="page">Arena</a>
+    <a href="booster.html?v=2">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a href="classeur.html?v=2">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="booster.html?v=2#marche">Marché</a>
+    <a class="on" href="fantasy.html?v=20" aria-current="page">Arena</a>
   </nav>
   <div class="top-actions">
     <div id="notifMount"></div>
@@ -552,7 +552,7 @@ const COMPS = [
     status: "open",
     reward: 1000,
     locks: true,
-    href: "fantasy-lineup.html?v=24&comp=all-stars-5"
+    href: "fantasy-lineup.html?v=25&comp=all-stars-5"
   },
   {
     id: "all-stars-4",
@@ -655,7 +655,7 @@ function renderCard(card){
   const cls = `card r${tier.rank}${paper ? " paper" : ""}${diamant ? " diamant" : ""}`;
   const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" data-id="${esc(card.id)}">
-    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp" alt="" loading="lazy"></div>
+    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=2" alt="" loading="lazy"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
       <div class="accent" style="background:${fam.a1}"></div>
