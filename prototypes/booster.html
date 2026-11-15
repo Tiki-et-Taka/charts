@@ -2169,7 +2169,7 @@ function renderCard(card, opts={}){
   const cls = `card r${tier.rank}${paper?" paper":""}${diamant?" diamant":""}${opts.zoomable===false?"":" zoomable"}`;
   const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" tabindex="${opts.zoomable===false?"-1":"0"}" data-idx="${opts.idx ?? ""}">
-    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=8" alt="" loading="lazy" onerror="this.onerror=function(){this.onerror=null;var m=this.src.replace('_x.webp','_m.webp');if(m!==this.src)this.src=m;};var s=this.src,n=s.indexOf('_B_')>=0?s.replace('_B_','_A_'):s.replace('_A_','_B_');if(n!==s)this.src=n;else{this.onerror=null;var m=s.replace('_x.webp','_m.webp');if(m!==s)this.src=m;}"></div>
+    <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=9" alt="" loading="lazy" onerror="this.onerror=function(){this.onerror=null;var m=this.src.replace('_x.webp','_m.webp');if(m!==this.src)this.src=m;};var s=this.src,n=s.indexOf('_B_')>=0?s.replace('_B_','_A_'):s.replace('_A_','_B_');if(n!==s)this.src=n;else{this.onerror=null;var m=s.replace('_x.webp','_m.webp');if(m!==s)this.src=m;}"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
     <div class="band" style="${bandStyle}">
       <div class="accent" style="background:${fam.a1}"></div>
@@ -4112,7 +4112,7 @@ function preload(cards){
   return Promise.all(cards.map(c => new Promise(res => {
     const img = new Image();
     img.onload = img.onerror = res;
-    img.src = `../out/illustrations/webp/${c.job}.webp?v=8`;
+    img.src = `../out/illustrations/webp/${c.job}.webp?v=9`;
     if(img.complete) res();
   })));
 }
