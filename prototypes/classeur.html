@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Big+Shoulders+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css?v=17">
-<script src="js/site-scale.js?v=8"></script>
+<script src="js/site-scale.js?v=9"></script>
 <script src="js/legal-return.js?v=2"></script>
 <style>
   :root {
@@ -686,6 +686,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
+<link rel="stylesheet" href="css/mobile.css?v=1">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -744,7 +745,7 @@
         </select>
       </div>
     </div>
-    <div class="filt-row">
+    <div class="filt-row filt-row-search">
       <span class="filt-label">Recherche</span>
       <input class="filt-search" type="search" id="q" placeholder="Nom ou groupe" autocomplete="off">
       <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Afficher manquantes</button>
@@ -855,7 +856,11 @@ function displayName(id){
 }
 let profileUserId = knownUser(askedPlayer) ? askedPlayer : "";
 const ACTIVE_USER_KEY = "charts.s1.activeUser";
-const PAGE_SIZE = 24; /* 6 × 4 */
+const PAGE_SIZE_DESKTOP = 24; /* 6 × 4 */
+const PAGE_SIZE_MOBILE = 6; /* 2 × 3 */
+function pageSize(){
+  return window.matchMedia("(max-width: 820px)").matches ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP;
+}
 
 let activeUserId = "u1";
 let catalog = [];
@@ -1292,10 +1297,11 @@ function render(){
   const data = loadOwned();
   const owned = data.got;
   const fav = data.fav || {};
-  const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  const size = pageSize();
+  const pages = Math.max(1, Math.ceil(list.length / size));
   if(page > pages) page = pages;
   if(page < 1) page = 1;
-  const slice = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const slice = list.slice((page - 1) * size, page * size);
 
   $("status").hidden = true;
   $("binder").hidden = false;
@@ -1762,7 +1768,16 @@ $("favOnly").addEventListener("click", () => {
 });
 $("prev").addEventListener("click", () => { page--; render(); });
 $("next").addEventListener("click", () => { page++; render(); });
-window.addEventListener("resize", scaleBinderCards);
+let lastMobileGrid = window.matchMedia("(max-width: 820px)").matches;
+window.addEventListener("resize", () => {
+  scaleBinderCards();
+  const now = window.matchMedia("(max-width: 820px)").matches;
+  if(now !== lastMobileGrid){
+    lastMobileGrid = now;
+    page = 1;
+    if(catalog.length) render();
+  }
+});
 $("grid").addEventListener("click", ev => {
   const favBtn = ev.target.closest("[data-fav-toggle]");
   if(favBtn){
@@ -1896,5 +1911,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
+<script src="js/mobile-ui.js?v=1"></script>
 </body>
 </html>

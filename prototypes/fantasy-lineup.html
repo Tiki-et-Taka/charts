@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Big+Shoulders+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css?v=17">
-<script src="js/site-scale.js?v=8"></script>
+<script src="js/site-scale.js?v=9"></script>
 <script src="js/legal-return.js?v=2"></script>
 <style>
   :root {
@@ -738,6 +738,7 @@
     .slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>
+<link rel="stylesheet" href="css/mobile.css?v=1">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -1689,5 +1690,6 @@ document.addEventListener("charts:fantasy", () => {
 boot();
 document.addEventListener("charts:credits-changed", () => syncUserUI());
 </script>
+<script src="js/mobile-ui.js?v=1"></script>
 </body>
 </html>
