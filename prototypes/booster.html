@@ -1599,7 +1599,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=6">
+<link rel="stylesheet" href="css/mobile.css?v=7">
 <style>
 @media (max-width: 820px) {
   .stage {
@@ -1607,13 +1607,23 @@
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
-  .pack-stack {
+  .pack-stack:not([hidden]) {
     position: absolute !important;
     left: 0;
     right: 0;
-    top: auto !important;
+    top: 132px !important;
     bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
     margin: 0 !important;
+    gap: 0 !important;
+    display: grid !important;
+    grid-template-rows: 1fr auto 1fr auto !important;
+    justify-items: center !important;
+  }
+  .pack-col { grid-row: 2 !important; }
+  .free-timer {
+    grid-row: 4 !important;
+    align-self: end !important;
+    margin-bottom: 4px !important;
   }
 }
 </style>
