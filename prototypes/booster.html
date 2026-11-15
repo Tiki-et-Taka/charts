@@ -1599,11 +1599,24 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=7">
+<link rel="stylesheet" href="css/mobile.css?v=8">
 <style>
 @media (max-width: 820px) {
+  body:has(.stage) {
+    display: flex !important;
+    flex-direction: column;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+  body:has(.stage) header.top {
+    position: relative !important;
+    flex: 0 0 auto;
+  }
   .stage {
     display: block !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
@@ -1611,7 +1624,7 @@
     position: absolute !important;
     left: 0;
     right: 0;
-    top: 132px !important;
+    top: 0 !important;
     bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
     margin: 0 !important;
     gap: 0 !important;

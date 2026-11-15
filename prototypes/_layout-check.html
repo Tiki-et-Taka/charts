@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>layout check</title>
+<style>
+html, body { margin: 0; height: 100%; background: #0d0d0d; color: #f2f0eb; font-family: sans-serif; }
+body { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+header { position: relative; flex: 0 0 auto; padding: 8px 12px; }
+h1 { font-size: 20px; margin: 40px 0 4px; text-transform: uppercase; }
+p.intro { margin: 0; color: #8a8680; font-size: 11px; padding-bottom: 12px; }
+.stage { flex: 1 1 auto; min-height: 0; height: auto; position: relative; }
+.pack-stack {
+  position: absolute; left: 0; right: 0; top: 0;
+  bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-template-rows: 1fr auto 1fr auto;
+  justify-items: center;
+}
+.pack-col { grid-row: 2; width: min(46vw, 168px); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pack { width: 100%; aspect-ratio: 599 / 971; background: #333; border: 1px solid #555; }
+.buy { width: 100%; height: 44px; background: #e68a1e; color: #111; border: 0; font-weight: 700; }
+.free-timer { grid-row: 4; align-self: end; margin: 0 0 4px; padding: 10px 14px; background: rgba(20,20,20,.88); border: 1px solid #3a3a3a; font-size: 14px; }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; height: 90px; background: #0d0d0d; border-top: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: space-around; color: #8a8680; font-size: 9px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Booster</h1>
+  <p class="intro">Plus de booster. Attends une nouvelle distribution ou achète-en un.</p>
+</header>
+<div class="stage">
+  <div class="pack-stack">
+    <div class="pack-col">
+      <div class="pack"></div>
+      <button class="buy">Acheter</button>
+    </div>
+    <p class="free-timer">Prochain gratuit dans 04:12:08</p>
+  </div>
+</div>
+<div class="tabs"><span>Boosters</span><span>Classeur</span><span>Marché</span><span>Arena</span></div>
+</body>
+</html>

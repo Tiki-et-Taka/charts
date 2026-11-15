@@ -360,8 +360,22 @@
   .filt-mark-seen { margin-left: 0 !important; width: 100%; }
 
   /* —— Booster / ouverture —— */
+  body:has(.stage) {
+    display: flex !important;
+    flex-direction: column;
+    height: 100% !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+  body:has(.stage) header.top {
+    position: relative !important;
+    flex: 0 0 auto;
+  }
   .stage {
     display: block !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     overflow: hidden !important;
@@ -370,7 +384,7 @@
     position: absolute !important;
     left: 0;
     right: 0;
-    top: 132px !important;
+    top: 0 !important;
     bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
     margin: 0 !important;
     gap: 0 !important;
