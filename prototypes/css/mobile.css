@@ -361,26 +361,44 @@
 
   /* —— Booster / ouverture —— */
   .stage {
-    padding-top: 108px !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 100px !important;
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow: hidden !important;
+  }
+  .pack-stack {
+    margin-top: 4px !important;
+    gap: 6px !important;
+    width: 100%;
   }
   .pack-col {
-    width: min(78vw, 300px) !important;
+    width: min(46vw, 168px) !important;
   }
   .pack-buy {
-    min-height: 48px;
-    font-size: 15px;
+    min-height: 44px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 14px;
   }
   .free-timer {
-    width: min(78vw, 300px) !important;
-    font-size: 13px !important;
-    letter-spacing: .1em !important;
-    color: #c8c4bc !important;
-    padding: 8px 10px 10px !important;
-    min-height: 2em;
+    order: -1;
+    width: auto !important;
+    max-width: calc(100% - 24px);
+    font-size: 14px !important;
+    font-weight: 500;
+    letter-spacing: .12em !important;
+    color: #f2f0eb !important;
+    padding: 10px 14px !important;
+    min-height: 2.2em;
+    background: rgba(20, 20, 20, .88);
+    border: 1px solid #3a3a3a;
   }
   .free-timer.ready {
     color: #e68a1e !important;
+    border-color: #e68a1e;
   }
   header .head-copy {
     padding: 4px 12px 8px !important;
