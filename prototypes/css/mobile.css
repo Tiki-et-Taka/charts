@@ -375,6 +375,7 @@
     width: 100%;
   }
   .pack-col {
+    order: 1;
     width: min(46vw, 168px) !important;
   }
   .pack-buy {
@@ -384,7 +385,7 @@
     font-size: 14px;
   }
   .free-timer {
-    order: -1;
+    order: 2;
     width: auto !important;
     max-width: calc(100% - 24px);
     font-size: 14px !important;
