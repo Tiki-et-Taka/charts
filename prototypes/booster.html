@@ -1599,7 +1599,24 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=5">
+<link rel="stylesheet" href="css/mobile.css?v=6">
+<style>
+@media (max-width: 820px) {
+  .stage {
+    display: block !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .pack-stack {
+    position: absolute !important;
+    left: 0;
+    right: 0;
+    top: auto !important;
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+    margin: 0 !important;
+  }
+}
+</style>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
