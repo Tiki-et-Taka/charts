@@ -7,20 +7,26 @@
   window.ChartsMobile = { mq: MQ, on: on };
 
   var ICO = {
+    boosters: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h8l-1.1 14H9.1L8 6z"/><path d="M8 6c0-2.2 1.8-4 4-4s4 1.8 4 4"/><path d="M10 10h4"/></svg>',
     classeur: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>',
     marche: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.2 9.5a2 2 0 0 1-2 1.5H7.2a2 2 0 0 1-2-1.5L4 9z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/></svg>',
-    arena: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9l8-5 8 5v10"/><path d="M9 19v-6h6v6"/></svg>'
+    arena: '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="17.2" rx="8.5" ry="3.4"/><path d="M3.5 17.2V12c0-2.4 3.8-5.4 8.5-5.4s8.5 3 8.5 5.4v5.2"/><path d="M6 13.4c1.6-1.8 3.7-2.8 6-2.8s4.4 1 6 2.8"/><path d="M12 6.6V3.2M7.2 7.6 5.6 4.4M16.8 7.6l1.6-3.2"/></svg>'
   };
+  var LABELS = { boosters: "Boosters", classeur: "Classeur", marche: "Marché", arena: "Arena" };
+  var TABS = ["boosters", "classeur", "marche", "arena"];
 
   function pageKey() {
     var p = (location.pathname.split("/").pop() || "").toLowerCase();
     if (p.indexOf("classeur") >= 0) return "classeur";
     if (p.indexOf("fantasy") >= 0) return "arena";
+    if (p.indexOf("lobby") >= 0) return "boosters";
     if (p.indexOf("booster") >= 0 && location.hash === "#marche") return "marche";
+    if (p.indexOf("booster") >= 0) return "boosters";
     return "";
   }
 
   function tabHref(id) {
+    if (id === "boosters") return "booster.html?v=2";
     if (id === "classeur") return "classeur.html?v=2";
     if (id === "marche") return "booster.html?v=2#marche";
     return "fantasy.html?v=20";
@@ -34,13 +40,26 @@
     nav.id = "mobileTabBar";
     nav.className = "mobile-tabbar";
     nav.setAttribute("aria-label", "Navigation mobile");
-    nav.innerHTML = ["classeur", "marche", "arena"].map(function (id) {
+    var tabs = TABS.map(function (id) {
       var onCls = cur === id ? " on" : "";
-      var label = id === "classeur" ? "Classeur" : id === "marche" ? "Marché" : "Arena";
       return '<a class="mobile-tab' + onCls + '" data-tab="' + id + '" href="' + tabHref(id) + '">' +
-        ICO[id] + "<span>" + label + "</span></a>";
+        ICO[id] + "<span>" + LABELS[id] + "</span></a>";
     }).join("");
+    nav.innerHTML =
+      '<div class="mobile-tabs">' + tabs + "</div>" +
+      '<nav class="mobile-legal" aria-label="Informations légales">' +
+        '<a href="legal/regles.html">Règles</a>' +
+        '<a href="legal/index.html?v=2">Mentions légales</a>' +
+      "</nav>";
     document.body.appendChild(nav);
+    var src = document.getElementById("packsBadge") || document.getElementById("packTileBadge");
+    var boost = nav.querySelector('.mobile-tab[data-tab="boosters"]');
+    if (src && boost && !src.hidden) {
+      var badge = document.createElement("span");
+      badge.className = "nav-badge";
+      badge.textContent = src.textContent;
+      boost.appendChild(badge);
+    }
   }
 
   function setupFilters() {

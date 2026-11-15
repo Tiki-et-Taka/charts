@@ -15,7 +15,7 @@
     min-height: 100dvh;
   }
   body {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
   }
   body:has(.stage) {
     padding-bottom: 0 !important;
@@ -55,10 +55,7 @@
 
   footer.site-foot,
   footer.foot {
-    bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
-    padding: 4px 12px 6px !important;
-    font-size: 9px !important;
-    z-index: 39 !important;
+    display: none !important;
   }
 
   .mobile-only { display: flex !important; }
@@ -70,19 +67,25 @@
 
   .mobile-tabbar {
     display: flex !important;
+    flex-direction: column;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 80;
-    height: calc(56px + env(safe-area-inset-bottom, 0px));
-    padding: 0 4px env(safe-area-inset-bottom, 0px);
+    height: auto;
+    padding: 0 0 env(safe-area-inset-bottom, 0px);
     box-sizing: border-box;
     background: rgba(13, 13, 13, .97);
     border-top: 1px solid #2a2a2a;
+    pointer-events: auto;
+  }
+  .mobile-tabs {
+    display: flex;
     align-items: stretch;
     justify-content: space-around;
-    pointer-events: auto;
+    min-height: 52px;
+    padding: 0 2px;
   }
   .mobile-tab {
     flex: 1 1 0;
@@ -95,12 +98,32 @@
     text-decoration: none;
     color: #8a8680;
     font-family: "Oswald", sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
-    letter-spacing: .1em;
+    letter-spacing: .08em;
     text-transform: uppercase;
-    padding: 6px 4px 4px;
+    padding: 6px 2px 4px;
     position: relative;
+  }
+  .mobile-legal {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 2px 12px 8px;
+    pointer-events: auto;
+  }
+  .mobile-legal a {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #6a6660;
+  }
+  .mobile-legal a:hover,
+  .mobile-legal a:active {
+    color: #c8c4bc;
   }
   .mobile-tab svg {
     width: 22px;
@@ -128,7 +151,7 @@
     right: calc(50% - 22px);
   }
 
-  /* —— Lobby : sachet + 3 onglets —— */
+  /* —— Lobby : sachet + onglets bas —— */
   body:has(.card-booster) {
     overflow: hidden;
     height: 100%;
@@ -339,7 +362,7 @@
   /* —— Booster / ouverture —— */
   .stage {
     padding-top: 108px !important;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   }
   .pack-col {
     width: min(78vw, 300px) !important;
@@ -347,6 +370,17 @@
   .pack-buy {
     min-height: 48px;
     font-size: 15px;
+  }
+  .free-timer {
+    width: min(78vw, 300px) !important;
+    font-size: 13px !important;
+    letter-spacing: .1em !important;
+    color: #c8c4bc !important;
+    padding: 8px 10px 10px !important;
+    min-height: 2em;
+  }
+  .free-timer.ready {
+    color: #e68a1e !important;
   }
   header .head-copy {
     padding: 4px 12px 8px !important;
@@ -369,7 +403,7 @@
     height: calc(var(--card-w) * 364 / 260);
   }
   .again-row {
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
     width: calc(100% - 24px);
     justify-content: center;
   }
