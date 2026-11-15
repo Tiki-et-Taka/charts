@@ -17,7 +17,7 @@
   body {
     padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
   }
-  body:has(.stage) {
+  body:has(.stage):not(.album):not(.market) {
     padding-bottom: 0 !important;
   }
 
@@ -360,18 +360,18 @@
   .filt-mark-seen { margin-left: 0 !important; width: 100%; }
 
   /* —— Booster / ouverture —— */
-  body:has(.stage) {
+  body:has(.stage):not(.album):not(.market) {
     display: flex !important;
     flex-direction: column;
     height: 100% !important;
     height: 100dvh !important;
     overflow: hidden !important;
   }
-  body:has(.stage) header.top {
+  body:has(.stage):not(.album):not(.market) header.top {
     position: relative !important;
     flex: 0 0 auto;
   }
-  .stage {
+  body:not(.album):not(.market) .stage {
     display: block !important;
     flex: 1 1 auto;
     min-height: 0;
@@ -379,6 +379,28 @@
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     overflow: hidden !important;
+  }
+  body.album,
+  body.market {
+    display: block !important;
+    height: auto !important;
+    min-height: 100dvh;
+    overflow: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  body.album .stage,
+  body.market .stage {
+    display: none !important;
+    flex: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  body.album header.top,
+  body.market header.top {
+    position: sticky !important;
+    top: 0;
+    flex: none;
   }
   .pack-stack:not([hidden]) {
     position: absolute !important;

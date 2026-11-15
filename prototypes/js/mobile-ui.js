@@ -19,7 +19,7 @@
     var p = (location.pathname.split("/").pop() || "").toLowerCase();
     if (p.indexOf("classeur") >= 0) return "classeur";
     if (p.indexOf("fantasy") >= 0) return "arena";
-    if (p.indexOf("lobby") >= 0) return "boosters";
+    if (p.indexOf("lobby") >= 0) return "";
     if (p.indexOf("booster") >= 0 && location.hash === "#marche") return "marche";
     if (p.indexOf("booster") >= 0) return "boosters";
     return "";
