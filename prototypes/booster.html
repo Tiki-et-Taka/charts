@@ -966,6 +966,7 @@
   .card.diamant .line-info {
     margin-top: 6px; font-size: 11px; letter-spacing: .03em; color: #c8c2b6;
   }
+  .card.diamant .line-group { color: #d8b35c; }
   .name {
     font-family: Oswald, Impact, sans-serif;
     font-weight: 600; letter-spacing: .04em;
@@ -2235,7 +2236,6 @@ function renderCard(card, opts={}){
   const bandStyle = paper || diamant ? "" : `background:${fam.fond};`;
   const group = card.group || "Artiste solo";
   const cls = `card r${tier.rank}${paper?" paper":""}${diamant?" diamant":""}${opts.zoomable===false?"":" zoomable"}`;
-  const info = `${fam.label} · ${instrumentLabel(card)} · ${group}`;
   return `<div class="${cls}" tabindex="${opts.zoomable===false?"-1":"0"}" data-idx="${opts.idx ?? ""}">
     <div class="art"><img src="../out/illustrations/webp/${esc(card.job)}.webp?v=10" alt="" loading="lazy" onerror="this.onerror=function(){this.onerror=null;var m=this.src.replace('_x.webp','_m.webp');if(m!==this.src)this.src=m;};var s=this.src,n=s.indexOf('_B_')>=0?s.replace('_B_','_A_'):s.replace('_A_','_B_');if(n!==s)this.src=n;else{this.onerror=null;var m=s.replace('_x.webp','_m.webp');if(m!==s)this.src=m;}"></div>
     ${diamant ? `<div class="title"><div class="myth-name" style="font-size:${mythName}px">${esc(card.name)}</div></div>` : ""}
@@ -2245,7 +2245,7 @@ function renderCard(card, opts={}){
       <div class="rarete" style="color:${tier.frame}">${tier.label}</div>
       <div class="meta">${esc(fam.label)} · ${esc(instrumentLabel(card))}</div>
       <div class="group">${esc(group)}</div>
-      ${diamant ? `<div class="line-rare">${tier.label}</div><div class="line-info">${esc(info)}</div>` : ""}
+      ${diamant ? `<div class="line-rare">${tier.label}</div><div class="line-info">${esc(fam.label)} · ${esc(instrumentLabel(card))} · <span class="line-group">${esc(group)}</span></div>` : ""}
     </div>
     <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/${catalog.length || 1000}</span></div>
     ${frameSvg(tier.kind, tier.rank, tier.frame)}

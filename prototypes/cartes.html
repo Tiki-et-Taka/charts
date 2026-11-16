@@ -90,6 +90,7 @@
     letter-spacing: .03em;
     color: #c8c2b6;
   }
+  .card.mythique .line-group { color: #d8b35c; }
   .name {
     font-family: Oswald, Impact, sans-serif;
     font-weight: 600; letter-spacing: .04em;
@@ -312,7 +313,7 @@ function renderCard(card, opts={}){
       <div class="rarete" style="color:${frame}">${tier.label}</div>
       <div class="meta">${fam.label} · ${INSTR[card.instrument]}</div>
       <div class="group">${group}</div>
-      ${mythique ? `<div class="line-rare">${tier.label}</div><div class="line-info">${fam.label} · ${INSTR[card.instrument]} · ${group}</div>` : ""}
+      ${mythique ? `<div class="line-rare">${tier.label}</div><div class="line-info">${fam.label} · ${INSTR[card.instrument]} · <span class="line-group">${group}</span></div>` : ""}
     </div>
     <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/1000</span></div>
     ${frameSvg(kind, tier.rank, frame, uid)}
