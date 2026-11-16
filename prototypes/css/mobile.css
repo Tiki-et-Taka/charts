@@ -457,14 +457,30 @@
     justify-content: center !important;
     overflow: visible !important;
   }
+  .hand.one-by-one {
+    top: 0 !important;
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 0 !important;
+    right: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    gap: 0 !important;
+  }
   .hand.one-by-one .slot-card.wait {
     display: none !important;
   }
   .hand.one-by-one .slot-card {
     --card-w: min(82vw, 300px);
     --s: calc(var(--card-w) / 260);
-    width: var(--card-w);
-    height: calc(var(--card-w) * 364 / 260);
+    width: var(--card-w) !important;
+    height: calc(var(--card-w) * 364 / 260) !important;
+  }
+  .hand.one-by-one .slot-card.to-album {
+    opacity: 0 !important;
+    transform: translateY(80px) scale(.7) !important;
+    transition: opacity .32s ease, transform .32s cubic-bezier(.2,.8,.2,1) !important;
+    pointer-events: none;
   }
   .again-row {
     bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
