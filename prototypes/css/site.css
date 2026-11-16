@@ -173,3 +173,68 @@ footer.foot .proto-cheats {
 body:not(:has(.stage)) {
   padding-bottom: 44px;
 }
+
+/* Reflet holographique platine (rang 3) — boucle automatique */
+@property --holo-x {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 18%;
+}
+@property --holo-y {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 30%;
+}
+.card.r3 {
+  --holo-x: 18%;
+  --holo-y: 30%;
+  isolation: isolate;
+  animation: holoSweep 5.2s ease-in-out infinite;
+}
+.cell:nth-child(3n) .card.r3,
+.slot-card:nth-child(3n) .card.r3,
+.slot:nth-child(3n) .card.r3,
+.comp-mini:nth-child(3n) .card.r3 {
+  animation-delay: -1.7s;
+}
+.cell:nth-child(3n+1) .card.r3,
+.slot-card:nth-child(3n+1) .card.r3,
+.slot:nth-child(3n+1) .card.r3,
+.comp-mini:nth-child(3n+1) .card.r3 {
+  animation-delay: -3.4s;
+}
+.card.r3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 3;
+  background:
+    radial-gradient(circle at var(--holo-x) var(--holo-y),
+      rgba(255,255,255,.52) 0%,
+      rgba(200,230,255,.2) 18%,
+      transparent 46%),
+    linear-gradient(
+      118deg,
+      transparent 28%,
+      rgba(255,120,190,.58) 44%,
+      rgba(255,220,120,.68) 50%,
+      rgba(120,230,255,.58) 56%,
+      transparent 72%
+    );
+  background-size: 100% 100%, 180% 180%;
+  background-position: 0 0, calc(var(--holo-x) * 1.1) calc(var(--holo-y) * 1.05);
+  mix-blend-mode: overlay;
+}
+@keyframes holoSweep {
+  0%   { --holo-x: 12%; --holo-y: 28%; }
+  25%  { --holo-x: 82%; --holo-y: 22%; }
+  50%  { --holo-x: 88%; --holo-y: 74%; }
+  75%  { --holo-x: 16%; --holo-y: 70%; }
+  100% { --holo-x: 12%; --holo-y: 28%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.r3 { animation: none; --holo-x: 58%; --holo-y: 36%; }
+  .card.r3::after { opacity: .48; }
+}
