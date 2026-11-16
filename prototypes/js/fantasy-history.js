@@ -1,7 +1,7 @@
 /* Historique Fantasy : un line-up validé vaut pour la semaine de compétition
    qui commence au verrouillage suivant (lundi 00:00). Dès que cette semaine a
-   commencé, il passe dans l'historique du joueur (onglet « Terminées ») et le
-   line-up courant est rouvert pour la semaine d'après, avec les mêmes cartes. */
+   commencé, il passe dans l'historique du joueur et le line-up de la semaine
+   suivante repart vide (Créer ton lineup). */
 (function () {
   const COMP_ID = "all-stars-5";
 
@@ -54,6 +54,7 @@
       localStorage.setItem(historyKey(userId), JSON.stringify(history));
     }
     lineup.locked = false;
+    lineup.slots = { voix: null, ryt1: null, ryt2: null, melo1: null, melo2: null };
     delete lineup.weekStart;
     localStorage.setItem(lineupKey(userId), JSON.stringify(lineup));
     return true;
