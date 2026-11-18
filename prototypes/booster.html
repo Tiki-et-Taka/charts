@@ -1632,7 +1632,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=33">
+<link rel="stylesheet" href="css/mobile.css?v=34">
 <style>
 @media (max-width: 820px) {
   footer.site-foot,
@@ -1968,12 +1968,13 @@
   <div class="shop-wrap" id="confirmBody"></div>
 </dialog>
 
-<script src="js/profile-avatar.js"></script>
+<script src="js/profile-avatar.js?v=2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
-<script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=6"></script>
+<script src="js/accounts.js?v=7"></script>
+<script src="js/charts-state.js?v=7"></script>
+<script src="js/hall-of-fame.js?v=1"></script>
 <script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=6"></script>
@@ -2852,6 +2853,7 @@ function destroyCopy(id){
     data.got[id] = got;
   }
   saveOwned(data);
+  if(window.ChartsHall) ChartsHall.reconcile(uid());
   // Annule les échanges en cours qui proposaient cette carte.
   const m = loadMarket();
   let dirty = false;

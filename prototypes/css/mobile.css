@@ -809,6 +809,21 @@
     width: min(100vw, 360px);
   }
 
+  .hero {
+    gap: 14px !important;
+  }
+  .hero .avatar-pick .avatar-face {
+    width: 72px !important;
+    height: 72px !important;
+  }
+  .size-chip { min-width: 40px; min-height: 40px; }
+  .hof-slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .pick-panel {
+    width: 100% !important;
+  }
+
   /* Zoom au-dessus de la barre d’onglets, pour garder Vendre / Défausser accessibles. */
   .zoom,
   #zoom {

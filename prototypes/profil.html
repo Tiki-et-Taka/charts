@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charts — Profil</title>
+<link rel="icon" type="image/png" href="img/favicon.png?v=2">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Charts">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css?v=18">
+<script src="js/site-scale.js?v=9"></script>
+<script src="js/legal-return.js?v=2"></script>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg-elev: #141414;
+    --ink: #f2f0eb;
+    --muted: #8a8680;
+    --line: #2a2a2a;
+    --line-hi: #3a3a3a;
+    --accent: #e68a1e;
+    --accent-ink: #111;
+    --panel: #161616;
+    --danger: #c44b3a;
+    --font-display: "Archivo Black", "Oswald", Impact, sans-serif;
+    --font-ui: "Oswald", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+  }
+  a { color: inherit; }
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    opacity: .14;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: rgba(13,13,13,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand {
+    justify-self: start;
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 30px);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .nav-main {
+    justify-self: center;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 20px;
+  }
+  .nav-main a {
+    position: relative;
+    text-decoration: none;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); padding: 6px 0 8px;
+  }
+  .nav-main a:hover { color: var(--ink); }
+  .nav-badge {
+    position: absolute; top: -7px; right: -14px;
+    min-width: 15px; height: 15px; padding: 0 4px;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-mono); font-size: 9px; font-weight: 500; line-height: 15px;
+    text-align: center; letter-spacing: 0; text-transform: none; pointer-events: none;
+  }
+  .nav-badge[hidden] { display: none; }
+  .top-actions { justify-self: end; display: flex; align-items: center; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--line); background: var(--panel);
+    padding: 6px 10px; font-size: 11px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+    white-space: nowrap;
+  }
+  .chip .coin { width: 22px; height: 14px; display: block; object-fit: contain; }
+  .chip.btn { appearance: none; font: inherit; cursor: pointer; color: inherit; }
+  .chip.btn:hover { border-color: var(--line-hi); background: #1c1c1c; }
+  .chip .ico { width: 14px; height: 14px; opacity: .75; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 96px; }
+  .hero {
+    display: flex; align-items: center; gap: 18px;
+    margin-bottom: 28px;
+  }
+  .hero .avatar-pick .avatar-face { width: 88px; height: 88px; }
+  .hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4.5vw, 42px);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: .95;
+  }
+  .hero p {
+    margin: 8px 0 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .section-title {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .section-lead {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: .02em;
+  }
+  .size-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    margin-bottom: 18px;
+  }
+  .size-row span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .size-chip {
+    appearance: none;
+    min-width: 40px; min-height: 40px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    font: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer;
+  }
+  .size-chip.on {
+    background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+  }
+  .hof-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 12px;
+  }
+  .hof-slot {
+    appearance: none;
+    border: 1px dashed var(--line-hi);
+    background: #111;
+    color: inherit;
+    min-height: 210px;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .hof-slot:hover { border-color: var(--accent); }
+  .hof-slot.filled { border-style: solid; border-color: var(--line); }
+  .hof-art {
+    flex: 1 1 auto;
+    min-height: 140px;
+    background: #0a0a0a center 18% / cover no-repeat;
+  }
+  .hof-vacant {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .hof-vacant b { font-size: 22px; font-weight: 400; color: var(--line-hi); }
+  .hof-meta {
+    padding: 8px 10px 10px;
+    border-top: 1px solid var(--line);
+  }
+  .hof-meta .name {
+    font-size: 13px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .hof-meta .sub {
+    margin-top: 2px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .logout { max-width: 280px; margin-top: 28px; }
+  .pick-veil {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 38;
+  }
+  .pick-veil[hidden], .pick-panel[hidden] { display: none !important; }
+  .pick-panel {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(440px, 94vw);
+    z-index: 41;
+    display: flex; flex-direction: column;
+    background: #121212;
+    border-left: 1px solid var(--line-hi);
+    padding: 16px 16px 40px;
+  }
+  .pick-head { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .pick-kicker {
+    margin: 0 0 4px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  }
+  .pick-head h2 {
+    margin: 0; font-family: var(--font-display);
+    font-size: 22px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .pick-close {
+    appearance: none; border: 0; background: transparent;
+    color: var(--muted); font-size: 28px; cursor: pointer;
+  }
+  .pick-filters { display: grid; gap: 6px; margin-bottom: 12px; }
+  .pick-filters input, .pick-filters select {
+    appearance: none; width: 100%;
+    border: 1px solid var(--line); background: #161616; color: var(--ink);
+    font-family: var(--font-mono); font-size: 12px; padding: 8px;
+  }
+  .pick-clear {
+    appearance: none; width: 100%; margin-bottom: 10px;
+    border: 1px solid var(--line); background: transparent; color: var(--muted);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; padding: 8px; cursor: pointer;
+  }
+  .pick-list { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+  .pick-item {
+    appearance: none; display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 10px; align-items: center;
+    border: 1px solid var(--line); background: transparent; color: inherit;
+    text-align: left; padding: 6px; cursor: pointer;
+  }
+  .pick-item.on { border-color: var(--accent); }
+  .pick-item img { width: 48px; height: 64px; object-fit: cover; display: block; background: #111; }
+  .pick-name { font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+  .pick-sub { display: block; margin-top: 2px; font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .pick-empty { color: var(--muted); padding: 24px 8px; }
+  .drawer-veil { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 60; }
+  .drawer-veil[hidden], .drawer[hidden] { display: none !important; }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 100vw);
+    z-index: 61; background: #121212; border-left: 1px solid var(--line);
+    padding: 18px; display: flex; flex-direction: column;
+  }
+  .drawer .head { display: flex; justify-content: space-between; align-items: center; }
+  .drawer h2 { margin: 0; font-family: var(--font-display); text-transform: uppercase; }
+  .drawer .close { appearance: none; border: 0; background: none; color: var(--muted); font-size: 28px; cursor: pointer; }
+</style>
+<link rel="stylesheet" href="css/mobile.css?v=34">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<header class="top">
+  <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
+  <nav class="nav-main" aria-label="Principal">
+    <a href="lobby.html">Lobby</a>
+    <a href="booster.html?v=16">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a href="classeur.html?v=10">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="booster.html?v=16#marche">Marché</a>
+    <a href="fantasy.html?v=23">Arena</a>
+  </nav>
+  <div class="top-actions">
+    <div id="notifMount"></div>
+    <span class="chip" aria-label="Crédits">
+      <img class="coin" src="img/credit-ticket.png?v=1" alt="" width="22" height="14" aria-hidden="true">
+      <span><b id="creditsBal">0</b> CR</span>
+    </span>
+    <button type="button" class="chip btn no-avatar" id="menuBtn" aria-label="Profil" aria-expanded="false" aria-controls="drawer" aria-haspopup="dialog">
+      <span class="avatar-face sm empty" data-avatar-face aria-hidden="true"></span>
+      <svg class="ico" data-avatar-fallback viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 19c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/></svg>
+      <span id="playerName">Joueur</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <label class="avatar-pick" title="Changer la photo">
+      <span class="avatar-face empty" data-avatar-face aria-hidden="true"></span>
+      <input type="file" id="avatarFile" accept="image/*" hidden>
+    </label>
+    <div>
+      <h1 id="pageTitle">Profil</h1>
+      <p id="pageMeta">Hall of Fame</p>
+      <p class="avatar-status" id="avatarStatus"></p>
+    </div>
+  </div>
+
+  <h2 class="section-title">Hall of Fame</h2>
+  <p class="section-lead">Compose le groupe de tes rêves avec n’importe quelles cartes de ton classeur. Si l’une d’elles est vendue ou défaussée, le Hall of Fame est effacé.</p>
+  <div class="size-row" id="sizeRow">
+    <span>Membres</span>
+  </div>
+  <div class="hof-slots" id="hofSlots"></div>
+  <button type="button" class="logout" id="logoutBtn">Déconnexion</button>
+</main>
+
+<div class="pick-veil" id="pickVeil" hidden></div>
+<aside class="pick-panel" id="pickPanel" hidden role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <div class="pick-head">
+    <div>
+      <p class="pick-kicker">Hall of Fame</p>
+      <h2 id="pickTitle">Choisir une carte</h2>
+    </div>
+    <button type="button" class="pick-close" id="pickClose" aria-label="Fermer">×</button>
+  </div>
+  <div class="pick-filters">
+    <input type="search" id="pickQ" placeholder="Nom ou groupe" autocomplete="off">
+  </div>
+  <div id="pickClearWrap"></div>
+  <div class="pick-list" id="pickList"></div>
+</aside>
+
+<footer class="site-foot">
+  <nav class="legal-links" aria-label="Informations légales">
+    <a href="legal/regles.html">Règles</a>
+    <a href="legal/index.html?v=2">Mentions légales</a>
+  </nav>
+</footer>
+
+<div class="drawer-veil" id="drawerVeil" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+  <div class="head">
+    <h2 id="drawerTitle">Profil</h2>
+    <button type="button" class="close" id="drawerClose" aria-label="Fermer">×</button>
+  </div>
+  <button type="button" class="logout" id="drawerLogout">Déconnexion</button>
+</aside>
+
+<script src="js/profile-avatar.js?v=2"></script>
+<script src="js/notifications.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+<script src="js/charts-config.js?v=1"></script>
+<script src="js/charts-api.js?v=2"></script>
+<script src="js/accounts.js?v=7"></script>
+<script src="js/charts-state.js?v=7"></script>
+<script src="js/hall-of-fame.js?v=1"></script>
+<script>
+if(window.ChartsAuthBlocked) throw new Error("auth");
+const $ = id => document.getElementById(id);
+const INSTR = {
+  voix:"Voix", guitare:"Guitare", basse:"Basse", batterie:"Batterie",
+  claviers:"Claviers", vents:"Vents", cordes:"Cordes", machines:"Machines"
+};
+const FAMILIES = {
+  metal:"Métal", punk:"Punk & hardcore", "hip-hop":"Hip-hop", électro:"Électronique",
+  reggae:"Reggae & dub", afro:"Afro", latin:"Latin", jazz:"Jazz", blues:"Blues",
+  funk:"Funk & disco", "R&B":"R&B & soul", country:"Country", folk:"Folk",
+  world:"Musiques du monde", chanson:"Chanson & variété", pop:"Pop", rock:"Rock"
+};
+const FAMILY_FROM_CATALOG = { hiphop:"hip-hop", electro:"électro", rnb:"R&B" };
+const TIERS = {
+  commune:"Commune", argent:"Argent", or:"Or", platine:"Platine", diamant:"Diamant"
+};
+const EXEC = { commune:"A", argent:"B", or:"A", platine:"B", diamant:"B" };
+let catalog = [];
+let byId = new Map();
+let openSlot = -1;
+let pickQ = "";
+const activeUserId = window.ChartsAccounts ? ChartsAccounts.session() : "";
+
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function familyKey(f){ return FAMILY_FROM_CATALOG[f] || f; }
+function foldRare(s){
+  const t = String(s || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
+  if(t === "legendaire" || t === "epique" || t === "platine") return "platine";
+  if(t === "mythique" || t === "diamant") return "diamant";
+  if(t === "rare" || t === "or") return "or";
+  if(t === "peu commune" || t === "peucommune" || t === "argent") return "argent";
+  return "commune";
+}
+function plateJob(plate, rarete){
+  const exec = EXEC[rarete] || "A";
+  return `${plate.style}_${exec}_${plate.instrument}_${plate.pose}_${plate.costume}_${plate.venue}_${plate.sil}`;
+}
+function cardsFromCatalog(doc){
+  const artists = Object.fromEntries((doc.artists || []).map(a => [a.qid, a]));
+  const plates = Object.fromEntries((doc.plates || []).map(p => [p.id, p]));
+  const groups = Object.fromEntries((doc.groups || []).map(g => [g.mbid, g]));
+  const out = [];
+  for(const row of doc.cards || []){
+    if(row.in_booster_pool === false) continue;
+    const artist = artists[row.artist_qid];
+    const plate = plates[row.plate_id];
+    if(!artist || !plate) continue;
+    const rarete = foldRare(row.rarity_current || row.rarity_initial);
+    const g = row.group_mbid ? groups[row.group_mbid] : null;
+    out.push({
+      id: row.id,
+      name: artist.name,
+      rarete,
+      famille: familyKey(row.family),
+      instrument: artist.instrument || plate.instrument,
+      group: g ? g.name : null,
+      job: plateJob(plate, rarete)
+    });
+  }
+  return out;
+}
+function artUrl(card){
+  return `../out/illustrations/webp/${esc(card.job)}.webp?v=10`;
+}
+function hall(){
+  return ChartsHall.load(activeUserId);
+}
+function refreshCredits(){
+  try {
+    const w = JSON.parse(localStorage.getItem(`charts.s1.${activeUserId}.wallet`) || "");
+    $("creditsBal").textContent = String(w && w.credits || 0);
+  } catch {
+    $("creditsBal").textContent = "0";
+  }
+}
+async function persist(next){
+  ChartsHall.write(activeUserId, next);
+  if(window.ChartsState && ChartsState.saveHall){
+    try {
+      await ChartsState.saveHall(next.size, next.slots);
+    } catch (err) {
+      alert(err.message);
+      ChartsHall.reconcile(activeUserId);
+    }
+  }
+  render();
+}
+function renderSize(){
+  const h = hall();
+  const row = $("sizeRow");
+  const chips = Array.from({ length: ChartsHall.MAX }, (_, i) => i + 1).map(n =>
+    `<button type="button" class="size-chip${h.size === n ? " on" : ""}" data-size="${n}">${n}</button>`
+  ).join("");
+  row.innerHTML = `<span>Membres</span>${chips}`;
+}
+function renderSlots(){
+  const h = hall();
+  const box = $("hofSlots");
+  if(!h.size){
+    box.innerHTML = `<p class="section-lead">Choisis d’abord le nombre de membres.</p>`;
+    return;
+  }
+  box.innerHTML = h.slots.map((id, i) => {
+    const card = id && byId.get(id);
+    if(!card){
+      return `<button type="button" class="hof-slot" data-slot="${i}">
+        <div class="hof-vacant"><b>+</b>Membre ${String(i + 1).padStart(2, "0")}<br>Choisis une carte</div>
+      </button>`;
+    }
+    return `<button type="button" class="hof-slot filled" data-slot="${i}">
+      <div class="hof-art" style="background-image:url('${artUrl(card)}')"></div>
+      <div class="hof-meta">
+        <div class="name">${esc(card.name)}</div>
+        <div class="sub">${esc(TIERS[card.rarete] || "")} · ${esc(INSTR[card.instrument] || card.instrument || "")}</div>
+      </div>
+    </button>`;
+  }).join("");
+}
+function render(){
+  const h = hall();
+  $("pageTitle").textContent = window.ChartsAccounts ? ChartsAccounts.name(activeUserId) : "Profil";
+  const filled = h.slots.filter(Boolean).length;
+  $("pageMeta").textContent = h.size
+    ? `Hall of Fame · ${filled} / ${h.size}`
+    : "Hall of Fame";
+  renderSize();
+  renderSlots();
+  refreshCredits();
+}
+function closePick(){
+  openSlot = -1;
+  $("pickPanel").hidden = true;
+  $("pickVeil").hidden = true;
+}
+function candidates(){
+  const h = hall();
+  const used = new Set(h.slots.filter((id, i) => id && i !== openSlot));
+  const q = pickQ.trim().toLowerCase();
+  let have;
+  try {
+    const data = JSON.parse(localStorage.getItem(`charts.s1.${activeUserId}.owned`) || "");
+    have = (data && data.got) || {};
+  } catch { have = {}; }
+  return catalog.filter(c => {
+    if(!have[c.id] || (have[c.id].n || 0) < 1) return false;
+    if(used.has(c.id)) return false;
+    if(q && !`${c.name} ${c.group || ""}`.toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => a.name.localeCompare(b.name, "fr"));
+}
+function renderPick(){
+  const h = hall();
+  const current = h.slots[openSlot] || "";
+  $("pickTitle").textContent = `Membre ${String(openSlot + 1).padStart(2, "0")}`;
+  $("pickClearWrap").innerHTML = current
+    ? `<button type="button" class="pick-clear" data-clear="${openSlot}">Retirer cette carte</button>`
+    : "";
+  const list = candidates();
+  $("pickList").innerHTML = list.length
+    ? list.slice(0, 80).map(c => `<button type="button" class="pick-item${c.id === current ? " on" : ""}" data-id="${esc(c.id)}">
+        <img src="${artUrl(c)}" alt="">
+        <span><span class="pick-name">${esc(c.name)}</span><span class="pick-sub">${esc(TIERS[c.rarete] || "")} · ${esc(INSTR[c.instrument] || "")}${c.group ? " · " + esc(c.group) : ""}</span></span>
+      </button>`).join("")
+    : `<p class="pick-empty">${pickQ ? "Aucun résultat" : "Aucune carte libre dans ton classeur."}</p>`;
+}
+function openPick(i){
+  openSlot = i;
+  pickQ = "";
+  $("pickQ").value = "";
+  $("pickPanel").hidden = false;
+  $("pickVeil").hidden = false;
+  renderPick();
+}
+async function setSize(n){
+  const h = hall();
+  const slots = (h.slots || []).slice();
+  while(slots.length < n) slots.push("");
+  await persist({ size: n, slots: slots.slice(0, n) });
+}
+async function setSlot(i, cardId){
+  const h = hall();
+  const slots = h.slots.slice();
+  slots[i] = cardId || "";
+  closePick();
+  await persist({ size: h.size, slots });
+}
+
+$("sizeRow").addEventListener("click", ev => {
+  const btn = ev.target.closest("[data-size]");
+  if(btn) setSize(Number(btn.dataset.size));
+});
+$("hofSlots").addEventListener("click", ev => {
+  const btn = ev.target.closest("[data-slot]");
+  if(!btn) return;
+  openPick(Number(btn.dataset.slot));
+});
+$("pickList").addEventListener("click", ev => {
+  const btn = ev.target.closest("[data-id]");
+  if(btn && openSlot >= 0) setSlot(openSlot, btn.dataset.id);
+});
+$("pickClearWrap").addEventListener("click", ev => {
+  if(ev.target.closest("[data-clear]") && openSlot >= 0) setSlot(openSlot, "");
+});
+$("pickQ").addEventListener("input", () => {
+  pickQ = $("pickQ").value || "";
+  if(openSlot >= 0) renderPick();
+});
+$("pickClose").addEventListener("click", closePick);
+$("pickVeil").addEventListener("click", closePick);
+
+const menuBtn = $("menuBtn");
+const drawer = $("drawer");
+const veil = $("drawerVeil");
+function setMenuOpen(open){
+  menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  drawer.hidden = !open;
+  veil.hidden = !open;
+}
+menuBtn.addEventListener("click", () => setMenuOpen(menuBtn.getAttribute("aria-expanded") !== "true"));
+$("drawerClose").addEventListener("click", () => setMenuOpen(false));
+veil.addEventListener("click", () => setMenuOpen(false));
+$("drawerLogout").addEventListener("click", () => {
+  if(window.ChartsAccounts) ChartsAccounts.logout();
+});
+
+if(window.ChartsAvatar){
+  ChartsAvatar.bind({ getUserId: () => activeUserId });
+}
+if(window.ChartsNotif){
+  ChartsNotif.bind({ getUserId: () => activeUserId });
+}
+
+async function boot(){
+  try {
+    const [doc] = await Promise.all([
+      ChartsApi.catalog(),
+      window.ChartsState ? ChartsState.ready() : null
+    ]);
+    catalog = cardsFromCatalog(doc);
+    byId = new Map(catalog.map(c => [c.id, c]));
+    render();
+  } catch (err) {
+    $("pageMeta").textContent = err && err.message || "Impossible de charger le profil.";
+  }
+}
+boot();
+document.addEventListener("charts:state", () => { ChartsHall.reconcile(activeUserId); render(); });
+document.addEventListener("charts:credits-changed", refreshCredits);
+</script>
+<script src="js/mobile-ui.js?v=23"></script>
+<script src="js/pwa-install.js?v=3"></script>
+</body>
+</html>

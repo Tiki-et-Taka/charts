@@ -15,7 +15,8 @@
     "classeur.html",
     "fantasy.html",
     "fantasy-lineup.html",
-    "fantasy-classement.html"
+    "fantasy-classement.html",
+    "profil.html"
   ]);
   const ERRORS = {
     non_connecte: "Ta session a expiré : reconnecte-toi.",

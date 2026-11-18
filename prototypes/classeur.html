@@ -772,7 +772,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=33">
+<link rel="stylesheet" href="css/mobile.css?v=34">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -900,13 +900,14 @@
 </div>
 <div id="snackbar" role="status" aria-live="polite"></div>
 
-<script src="js/profile-avatar.js"></script>
+<script src="js/profile-avatar.js?v=2"></script>
 <script src="js/notifications.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
-<script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=6"></script>
+<script src="js/accounts.js?v=7"></script>
+<script src="js/charts-state.js?v=7"></script>
+<script src="js/hall-of-fame.js?v=1"></script>
 <script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=6"></script>
@@ -1664,6 +1665,7 @@ function destroyCopy(cardId){
     data.got[cardId] = got;
   }
   saveOwned(data);
+  if(window.ChartsHall) ChartsHall.reconcile(activeUserId);
   const gain = SALE_DESTROY[card.rarete] || 2;
   const w = loadWalletRaw();
   w.credits = (Number(w.credits) || 0) + gain;

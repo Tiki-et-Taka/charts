@@ -35,6 +35,7 @@
     carte_engagee: "Carte engagée en Arena — retire-la du groupe, ou attends la fin de la semaine en cours.",
     poste_invalide: "Cet artiste ne peut pas occuper ce poste.",
     carte_deja_placee: "Cette carte est déjà sur un autre poste.",
+    taille_invalide: "Choisis entre 1 et 8 membres.",
     trop_de_diamants: "Un seul diamant dans le groupe.",
     lineup_incomplet: "Complète les 5 postes avant de valider.",
     competition_fermee: "Cette compétition n’est pas ouverte.",
@@ -113,6 +114,12 @@
       n: p.n || 0, sinceMyth: p.since_myth || 0, sinceEpic: p.since_epic || 0, starterMyth: !!p.starter_myth
     }));
     localStorage.setItem(key(me, "owned"), JSON.stringify(ownedFrom(state.copies, state.favorites)));
+    if (Object.prototype.hasOwnProperty.call(state, "hall")) {
+      const h = state.hall;
+      localStorage.setItem(key(me, "hall"), JSON.stringify(
+        h && h.size ? { size: h.size, slots: h.slots || [] } : { size: 0, slots: [] }
+      ));
+    }
     document.dispatchEvent(new CustomEvent("charts:state", { detail: state }));
     document.dispatchEvent(new CustomEvent("charts:credits-changed"));
   }
@@ -284,6 +291,10 @@
     return settle(call("set_favorite", { p_card_id: cardId, p_on: !!on }, data => data.state));
   }
 
+  function saveHall(size, slots) {
+    return settle(call("save_hall_of_fame", { p_size: size || 0, p_slots: slots || [] }));
+  }
+
   function markSeen(cardIds) {
     return call("mark_seen", { p_card_ids: cardIds && cardIds.length ? cardIds : null }).catch(err => {
       console.warn("[Charts] nouveautés :", err.message);
@@ -304,7 +315,7 @@
   window.ChartsState = {
     ready, sync, syncMarket, marketAct, markNotificationsRead,
     syncFantasy, fantasyAct, standings,
-    openBooster, buyPacks, destroyCopy, setFavorite, markSeen, loadPlayer,
+    openBooster, buyPacks, destroyCopy, setFavorite, saveHall, markSeen, loadPlayer,
     marketOpen: true
   };
 

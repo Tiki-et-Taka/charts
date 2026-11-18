@@ -60,8 +60,8 @@
         color: #e05050;
       }
       .avatar-status:empty { display: none; }
-      #menuBtn .avatar-face.sm { margin-right: 2px; }
-      #menuBtn .ico[data-avatar-fallback] { display: none; }
+      #menuBtn .avatar-face.sm { margin-right: 2px; cursor: pointer; }
+      #menuBtn .ico[data-avatar-fallback] { display: none; cursor: pointer; }
       #menuBtn.no-avatar .avatar-face.sm { display: none; }
       #menuBtn.no-avatar .ico[data-avatar-fallback] { display: block; }
     `;
@@ -184,6 +184,19 @@
     }
 
     refresh(getUserId());
+
+    const menu = document.getElementById("menuBtn");
+    if (menu && !menu.dataset.profileNav) {
+      menu.dataset.profileNav = "1";
+      menu.addEventListener("click", ev => {
+        const onPhoto = ev.target.closest("[data-avatar-face], [data-avatar-fallback]");
+        const mobile = window.ChartsMobile && ChartsMobile.on && ChartsMobile.on();
+        if (!onPhoto && !mobile) return;
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        if (!/profil\.html/i.test(location.pathname)) location.href = "profil.html";
+      }, true);
+    }
   }
 
   window.ChartsAvatar = { get, set, refresh, bind };
