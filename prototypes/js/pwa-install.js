@@ -1,6 +1,7 @@
 /* Raccourci écran d’accueil — mobile uniquement. */
 (function () {
   var KEY = "charts.pwa.icon";
+  var SESSION = "charts.pwa.asked";
   var deferred = null;
   var asked = false;
   var dlg = null;
@@ -22,7 +23,17 @@
     try { return localStorage.getItem(KEY) || ""; } catch (e) { return ""; }
   }
   function store(v) {
-    try { localStorage.setItem(KEY, v); } catch (e) {}
+    try {
+      if (v) localStorage.setItem(KEY, v);
+      else localStorage.removeItem(KEY);
+    } catch (e) {}
+  }
+  function sessionAsked() {
+    try { return sessionStorage.getItem(SESSION) === "1"; } catch (e) { return false; }
+  }
+  function markSession() {
+    try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
+    asked = true;
   }
   function ios() {
     var ua = navigator.userAgent || "";
@@ -33,8 +44,8 @@
     return /FBAN|FBAV|Instagram|Line\/|Twitter|WhatsApp|Snapchat/i.test(navigator.userAgent || "");
   }
   function alreadyDone() {
-    var v = stored();
-    return v === "installed" || v === "dismissed";
+    if (sessionAsked()) return true;
+    return stored() === "dismissed";
   }
 
   function ensureHead() {
@@ -99,25 +110,27 @@
       deferred = null;
       ev.prompt();
       Promise.resolve(ev.userChoice).then(function (choice) {
-        store(choice && choice.outcome === "accepted" ? "installed" : "dismissed");
+        if (choice && choice.outcome === "accepted") store("installed");
+        markSession();
         hide();
       }).catch(function () {
-        store("dismissed");
+        markSession();
         hide();
       });
       return;
     }
     if (ios()) {
-      store("installed");
+      markSession();
       iosHelp();
       return;
     }
-    store("dismissed");
+    markSession();
     hide();
   }
 
   function onNo() {
     store("dismissed");
+    markSession();
     hide();
   }
 
@@ -140,7 +153,7 @@
       if (!btn) return;
       var act = btn.getAttribute("data-pwa");
       if (act === "yes") onYes();
-      else if (act === "ok") hide();
+      else if (act === "ok") { markSession(); hide(); }
       else if (act === "no") onNo();
     });
     document.body.appendChild(dlg);
@@ -151,7 +164,7 @@
     if (asked || !mobile() || alreadyDone() || standalone() || inAppBrowser()) return;
     if (!(deferred || ios())) return;
     if (otherDialogOpen()) return;
-    asked = true;
+    markSession();
     build();
     if (!dlg.open) dlg.showModal();
   }
@@ -179,7 +192,7 @@
   });
   window.addEventListener("appinstalled", function () {
     store("installed");
-    asked = true;
+    markSession();
     hide();
   });
 
@@ -190,6 +203,7 @@
     store("installed");
     return;
   }
+  if (stored() === "installed") store("");
   if (!mobile() || alreadyDone() || inAppBrowser()) return;
 
   if (ios()) schedule();
