@@ -1710,7 +1710,7 @@
   <nav class="nav-main" role="tablist" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
-    <a href="classeur.html?v=2" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="classeur.html?v=3" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
     <a href="fantasy.html?v=20">Arena</a>
   </nav>
@@ -1848,7 +1848,7 @@
 <section id="market" aria-label="Marché">
   <p class="market-closed-note" id="marketClosed">Le marché entre joueurs ouvre à la prochaine étape du serveur. Tes cartes et tes crédits sont déjà enregistrés en ligne.</p>
   <div class="market-toolbar">
-    <p class="hint" id="marketHint">Prix libre · taxe 10&nbsp;% arrondie (&lt;5 cr = 0) · annuler est gratuit</p>
+    <p class="hint" id="marketHint">Prix ≥ défausse (2 / 6 / 20 / 60 / 150) · taxe 10&nbsp;% arrondie (&lt;5 cr = 0) · annuler est gratuit</p>
     <div class="tabs" role="tablist" aria-label="Annonces">
       <button type="button" class="chip on" data-market-tab="all" role="tab" aria-selected="true">Toutes</button>
       <button type="button" class="chip" data-market-tab="mine" role="tab" aria-selected="false">Mes ventes</button>
@@ -1943,7 +1943,7 @@
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
 <script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=5"></script>
+<script src="js/charts-state.js?v=6"></script>
 <script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=6"></script>
@@ -2013,7 +2013,7 @@ function userName(id){
 function sellerProfileLink(id){
   const name = userName(id);
   if(!knownUser(id)) return esc(name);
-  return `<a class="seller-link" href="classeur.html?v=2&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="seller-link" href="classeur.html?v=3&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function ownedKey(userId){ return `charts.s1.${userId || uid()}.owned`; }
 function walletKey(userId){ return `charts.s1.${userId || uid()}.wallet`; }
@@ -2141,13 +2141,21 @@ const STARTER_PACKS = 5;
 const FREE_PACK_MS = 12 * 60 * 60 * 1000;
 const FREE_PACK_CATCHUP_MAX = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
-const YOUNG_MS = 7 * DAY_MS;
-const MATURE_MS = 30 * DAY_MS;
 const MARKET_TAX = 0.10;
-const MARKET_PRICE_MIN = 1;
 const DESTROY_CREDITS = {
   commune: 2, argent: 6, or: 20, platine: 60, diamant: 150
 };
+function scrapValue(card){
+  const r = card && typeof card === "object" ? card.rarete : card;
+  return DESTROY_CREDITS[r] || 2;
+}
+function minSellPrice(card){
+  return scrapValue(card);
+}
+function priceFloorWhy(card){
+  const min = minSellPrice(card);
+  return `Prix minimum : ${min} crédit${min > 1 ? "s" : ""} (valeur de défausse).`;
+}
 /* Seal band as fractions of the pack image box (canvas tear).
    y0=0 so the crimped top is part of the flap, not a fixed leftover. */
 const SEAL = { x0: 0.0, x1: 1.0, y0: 0.0, y1: 0.155 };
@@ -2643,7 +2651,7 @@ function ensureWallet(){
     dirty = true;
   }
   if(!w.createdAt){
-    w.createdAt = w.starter ? now - MATURE_MS - DAY_MS : now;
+    w.createdAt = now;
     dirty = true;
   }
   if(!Array.isArray(w.acts)) w.acts = [];
@@ -2661,23 +2669,6 @@ function ensureWallet(){
   if(dirty) saveWallet(w);
   return w;
 }
-function accountTier(userId){
-  const created = loadWallet(userId).createdAt || Date.now();
-  const age = Date.now() - created;
-  if(age < YOUNG_MS) return "young";
-  if(age < MATURE_MS) return "mid";
-  return "mature";
-}
-function marketCaps(userId){
-  const tier = accountTier(userId);
-  if(tier === "young") return { tier, list: 0, buy: 0, trade: 0 };
-  if(tier === "mid") return { tier, list: 2, buy: 2, trade: 1 };
-  return { tier, list: Infinity, buy: Infinity, trade: Infinity };
-}
-function actsInDay(userId, kind){
-  const since = Date.now() - DAY_MS;
-  return (loadWallet(userId).acts || []).filter(a => a.k === kind && a.t >= since).length;
-}
 function noteAct(userId, kind){
   const w = loadWallet(userId);
   const since = Date.now() - DAY_MS;
@@ -2685,78 +2676,14 @@ function noteAct(userId, kind){
   w.acts.push({ k: kind, t: Date.now() });
   saveWallet(w, userId);
 }
-function youngDaysLeft(userId){
-  const created = loadWallet(userId).createdAt || Date.now();
-  return Math.max(1, Math.ceil((YOUNG_MS - (Date.now() - created)) / DAY_MS));
-}
-const BOUND_TIP = "Cette carte a été ouverte dans un booster offert. Elle ne peut être ni vendue, ni échangée, ni défaussée pendant les 7 premiers jours du compte.";
-function sellWaitLabel(userId){
-  const days = youngDaysLeft(userId);
-  return `Vendable dans ${days} ${days > 1 ? "jours" : "jour"}`;
-}
-function sellWaitMarkup(userId){
-  return `<span class="sell-wait">${esc(sellWaitLabel(userId))}<span class="info-tip" tabindex="0" role="note"><span class="info-mark" aria-hidden="true">i</span><span class="tip">${esc(BOUND_TIP)}</span></span></span>`;
-}
-function boundBlockWhy(userId){
-  return `${sellWaitLabel(userId)}. ${BOUND_TIP}`;
-}
-function gateMarket(userId, kind){
-  const caps = marketCaps(userId);
-  if(caps[kind] === 0){
-    return {
-      ok: false,
-      why: `Compte neuf : le marché entre joueurs s’ouvre dans ${youngDaysLeft(userId)} j.`
-    };
-  }
-  if(caps[kind] === Infinity) return { ok: true };
-  if(actsInDay(userId, kind) >= caps[kind]){
-    const labels = {
-      list: caps[kind] > 1 ? "ventes" : "vente",
-      buy: caps[kind] > 1 ? "achats" : "achat",
-      trade: caps[kind] > 1 ? "échanges" : "échange"
-    };
-    return {
-      ok: false,
-      why: `Plafond atteint : ${caps[kind]} ${labels[kind]} par 24 h tant que le compte a moins de 30 jours.`
-    };
-  }
-  return { ok: true };
-}
-function isBoundOrigin(origin, userId){
-  return !!(origin && origin.free) && accountTier(userId) === "young";
-}
-function boundCopiesFor(userId, cardId){
-  if(accountTier(userId) !== "young") return 0;
-  const got = loadOwned(userId).got[cardId];
-  if(!got) return 0;
-  const n = got.n || 0;
-  const origins = Array.isArray(got.origins) ? got.origins : [];
-  let bound = 0;
-  for(let i = 0; i < n; i++){
-    if(origins[i] && origins[i].free) bound++;
-  }
-  return bound;
-}
-function boundCopies(cardId){ return boundCopiesFor(uid(), cardId); }
 function tradableCopiesFor(userId, cardId){
-  return Math.max(0, freeCopiesFor(userId, cardId) - boundCopiesFor(userId, cardId));
+  return freeCopiesFor(userId, cardId);
 }
 function tradableCopies(cardId){ return tradableCopiesFor(uid(), cardId); }
 function refreshMarketHint(){
   const el = $("marketHint");
   if(!el) return;
-  const tier = accountTier(uid());
-  if(tier === "young"){
-    el.textContent = `Compte neuf : marché entre joueurs fermé encore ${youngDaysLeft(uid())} j.`;
-    return;
-  }
-  if(tier === "mid"){
-    el.textContent = SERVER
-      ? "Compte récent : 2 ventes, 2 achats et 1 échange par 24 h."
-      : "Compte récent : 2 ventes, 2 achats et 1 échange par 24 h. Les PNJ restent disponibles.";
-    return;
-  }
-  el.textContent = "Prix libre · taxe 10 % arrondie (<5 cr = 0) · annuler est gratuit";
+  el.textContent = "Prix ≥ défausse (2 / 6 / 20 / 60 / 150) · taxe 10 % arrondie (<5 cr = 0) · annuler est gratuit";
 }
 function msUntilFreePack(w = loadWallet()){
   return Math.max(0, (w.nextFreeAt || 0) - Date.now());
@@ -2877,11 +2804,7 @@ function destroyCopy(id){
   const got = data.got[id];
   const n = got ? (got.n || 0) : 0;
   const free = freeCopies(id);
-  const bound = boundCopies(id);
-  if(!got || n < 1 || free < 1 || free <= bound){
-    if(free >= 1 && bound >= free){
-      return { ok: false, why: boundBlockWhy(uid()) };
-    }
+  if(!got || n < 1 || free < 1){
     if(free < 1 && n >= 1 && isLineupLocked(id)){
       return { ok: false, why: lineupWhy(id, "scrap") };
     }
@@ -2891,9 +2814,7 @@ function destroyCopy(id){
   }
   got.n -= 1;
   if(Array.isArray(got.origins)){
-    const young = accountTier(uid()) === "young";
-    const idx = young ? got.origins.findIndex(o => !(o && o.free)) : 0;
-    got.origins.splice(idx >= 0 ? idx : 0, 1);
+    got.origins.splice(0, 1);
   }
   if(got.n < 1){
     delete data.got[id];
@@ -3004,16 +2925,19 @@ function closeAppConfirm(){
 }
 function marketTax(price){
   const p = Math.floor(Number(price) || 0);
-  if(p < MARKET_PRICE_MIN) return 0;
+  if(p < 1) return 0;
   // 10 % arrondi : <5 → 0, 5–14 → 1, 15–24 → 2, etc.
   return Math.round(p * MARKET_TAX);
 }
-function isValidMarketPrice(price){
-  return Math.floor(Number(price) || 0) >= MARKET_PRICE_MIN;
+function isValidMarketPrice(price, card){
+  return Math.floor(Number(price) || 0) >= minSellPrice(card);
 }
 function suggestPrice(card){
-  const d = DESTROY_CREDITS[card.rarete] || 2;
-  return Math.max(MARKET_PRICE_MIN, d * 4);
+  const d = minSellPrice(card);
+  return Math.max(d, d * 4);
+}
+function canCreditOffer(listing, card){
+  return !!(listing && card && listing.price > minSellPrice(card));
 }
 function sellerPayout(price){
   const p = Math.floor(Number(price) || 0);
@@ -3184,11 +3108,6 @@ async function proposeTrade(listingId, offerCardId){
   if(isFavorite(offerCardId)){
     return { ok: false, why: "Cette carte est en favori — retire-la des favoris pour l’échanger." };
   }
-  if(boundCopies(offerCardId) > 0 && tradableCopies(offerCardId) < 1){
-    return { ok: false, why: boundBlockWhy(uid()) };
-  }
-  const tradeGate = gateMarket(uid(), "trade");
-  if(!tradeGate.ok) return tradeGate;
   if(tradableCopies(offerCardId) < 1){
     return { ok: false, why: isLineupLocked(offerCardId)
       ? lineupWhy(offerCardId, "trade")
@@ -3296,9 +3215,6 @@ async function acceptTrade(tradeId){
   }
   if(freeCopiesFor(t.fromUser, t.offerCardId) < 1){
     return { ok: false, why: "L’autre joueur n’a plus la carte proposée libre." };
-  }
-  if(boundCopiesFor(t.fromUser, t.offerCardId) > 0 && tradableCopiesFor(t.fromUser, t.offerCardId) < 1){
-    return { ok: false, why: boundBlockWhy(t.fromUser) };
   }
   const li = t.listingId
     ? m.listings.findIndex(l => l.id === t.listingId)
@@ -3594,7 +3510,7 @@ function seedNpcListings(force){
     const card = poolCards.splice(idx, 1)[0];
     if(!card) break;
     const jitter = 0.75 + Math.random() * 0.5;
-    const price = Math.max(MARKET_PRICE_MIN, Math.round(suggestPrice(card) * jitter));
+    const price = Math.max(minSellPrice(card), Math.round(suggestPrice(card) * jitter));
     picks.push({
       id: `npc-${card.id}-${Date.now()}-${i}`,
       cardId: card.id,
@@ -3613,7 +3529,7 @@ async function listCardForSale(cardId, price){
     const card = byId.get(cardId);
     const p = Math.floor(Number(price) || 0);
     if(!card) return { ok: false, why: "Carte inconnue." };
-    if(!isValidMarketPrice(p)) return { ok: false, why: `Prix minimum : ${MARKET_PRICE_MIN} crédit.` };
+    if(!isValidMarketPrice(p, card)) return { ok: false, why: priceFloorWhy(card) };
     try { await ChartsState.marketAct("create_listing", { p_card_id: cardId, p_price: p }); }
     catch(err){ return { ok: false, why: err.message }; }
     return { ok: true, payout: sellerPayout(p) };
@@ -3624,14 +3540,9 @@ async function listCardForSale(cardId, price){
   if(isFavorite(cardId)){
     return { ok: false, why: "Cette carte est en favori — retire-la des favoris pour la vendre." };
   }
-  if(!isValidMarketPrice(p)){
-    return { ok: false, why: `Prix minimum : ${MARKET_PRICE_MIN} crédit.` };
+  if(!isValidMarketPrice(p, card)){
+    return { ok: false, why: priceFloorWhy(card) };
   }
-  if(boundCopies(cardId) > 0 && tradableCopies(cardId) < 1 && freeCopies(cardId) > 0){
-    return { ok: false, why: boundBlockWhy(uid()) };
-  }
-  const gate = gateMarket(uid(), "list");
-  if(!gate.ok) return gate;
   if(tradableCopies(cardId) < 1){
     if(isLineupLocked(cardId)){
       return { ok: false, why: lineupWhy(cardId, "sell") };
@@ -3688,10 +3599,6 @@ async function buyListing(listingId){
   if(i < 0) return { ok: false, why: "Annonce introuvable." };
   const listing = m.listings[i];
   if(isMe(listing.seller)) return { ok: false, why: "Tu ne peux pas acheter ta propre annonce." };
-  if(listing.seller !== "npc"){
-    const gate = gateMarket(uid(), "buy");
-    if(!gate.ok) return gate;
-  }
   const w = ensureWallet();
   if(w.credits < listing.price) return { ok: false, why: "Pas assez de crédits." };
   w.credits -= listing.price;
@@ -3727,7 +3634,9 @@ async function buyListing(listingId){
 async function makeOffer(listingId, price){
   if(SERVER){
     const p = Math.floor(Number(price) || 0);
-    if(!isValidMarketPrice(p)) return { ok: false, why: `Prix minimum : ${MARKET_PRICE_MIN} crédit.` };
+    const listing = loadMarket().listings.find(l => l.id === listingId);
+    const card = listing ? byId.get(listing.cardId) : null;
+    if(!isValidMarketPrice(p, card)) return { ok: false, why: priceFloorWhy(card) };
     try { await ChartsState.marketAct("make_offer", { p_listing_id: Number(listingId), p_price: p }); }
     catch(err){ return { ok: false, why: err.message }; }
     return { ok: true };
@@ -3736,10 +3645,9 @@ async function makeOffer(listingId, price){
   const listing = m.listings.find(l => l.id === listingId);
   if(!listing) return { ok: false, why: "Annonce introuvable." };
   if(isMe(listing.seller)) return { ok: false, why: "Tu ne peux pas offrir sur ta propre annonce." };
-  const buyGate = gateMarket(uid(), "buy");
-  if(!buyGate.ok) return buyGate;
   const p = Math.floor(Number(price) || 0);
-  if(!isValidMarketPrice(p)) return { ok: false, why: `Prix minimum : ${MARKET_PRICE_MIN} crédit.` };
+  const card = byId.get(listing.cardId);
+  if(!isValidMarketPrice(p, card)) return { ok: false, why: priceFloorWhy(card) };
   if(p >= listing.price) return { ok: false, why: "La contre-offre doit être inférieure au prix affiché." };
   const w = ensureWallet();
   if(w.credits < p) return { ok: false, why: "Pas assez de crédits pour cette offre." };
@@ -3813,9 +3721,6 @@ async function acceptOffer(offerId){
   if(!o) return { ok: false, why: "Offre introuvable." };
   if(!isMe(o.seller)) return { ok: false, why: "Ce n’est pas ton annonce." };
   if(o.status !== "pending") return { ok: false, why: "Cette offre n’est plus active." };
-  if(o.buyer !== "npc" && accountTier(o.buyer) === "young"){
-    return { ok: false, why: "Le compte de l’acheteur est encore trop récent pour acheter." };
-  }
   const li = m.listings.findIndex(l => l.id === o.listingId);
   if(li < 0) return { ok: false, why: "Annonce introuvable." };
   if(o.buyer !== "npc"){
@@ -3861,10 +3766,11 @@ function seedNpcOffersOnMyListings(){
     if(pending.length >= 2) continue;
     if(pending.some(o => o.buyer === "npc")) continue;
     if(Math.random() > 0.55) continue;
-    const low = Math.max(MARKET_PRICE_MIN, Math.floor(listing.price * 0.55));
+    const card = byId.get(listing.cardId);
+    const low = Math.max(minSellPrice(card), Math.floor(listing.price * 0.55));
     const high = Math.max(low, Math.floor(listing.price * 0.9) - 1);
     const price = low >= high ? low : low + Math.floor(Math.random() * (high - low + 1));
-    if(price >= listing.price) continue;
+    if(price >= listing.price || price < minSellPrice(card)) continue;
     const offer = {
       id: `off-npc-${listing.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       listingId: listing.id,
@@ -4867,8 +4773,8 @@ again.addEventListener("click", async () => {
   if(phase !== "open") return;
   await stashHand();
 });
-$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=2"; });
-$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=2"; });
+$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=3"; });
+$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=3"; });
 function clampShopQty(n){
   const v = Math.floor(Number(n));
   if(!Number.isFinite(v) || v < 1) return 1;
@@ -5006,8 +4912,8 @@ function updateSellPayoutHint(){
   const hint = $("sellPayoutHint");
   if(!hint) return;
   const raw = readSellPrice();
-  if(!isValidMarketPrice(raw)){
-    hint.textContent = `Prix minimum : ${MARKET_PRICE_MIN} crédit. Taxe = 10 % arrondie (<5 = 0).`;
+  if(!isValidMarketPrice(raw, sellCard)){
+    hint.textContent = `${priceFloorWhy(sellCard)} Taxe = 10 % arrondie (<5 = 0).`;
     return;
   }
   const tax = marketTax(raw);
@@ -5018,13 +4924,14 @@ function updateSellPayoutHint(){
 }
 function renderSellForm(){
   if(!sellCard) return;
-  if(sellPrice < MARKET_PRICE_MIN) sellPrice = suggestPrice(sellCard);
+  const floor = minSellPrice(sellCard);
+  if(sellPrice < floor) sellPrice = suggestPrice(sellCard);
   $("sellBody").innerHTML =
     `<div class="shop-bar"><span>Vendre « ${esc(sellCard.name)} »</span>` +
     `<button type="button" id="sellClose">Fermer</button></div>` +
     `<div class="shop-field">` +
     `<label for="sellPriceInput">Prix de vente (crédits)</label>` +
-    `<input type="number" id="sellPriceInput" min="${MARKET_PRICE_MIN}" max="999999" step="1" value="${sellPrice}">` +
+    `<input type="number" id="sellPriceInput" min="${floor}" max="999999" step="1" value="${sellPrice}">` +
     `</div>` +
     `<p class="shop-bal" id="sellPayoutHint"></p>` +
     `<div class="shop-actions">` +
@@ -5071,7 +4978,7 @@ function openSellDialog(card){
   if(!$("sell").open) $("sell").showModal();
 }
 async function finishSell(){
-  if(!sellCard || !isValidMarketPrice(sellPrice)) return;
+  if(!sellCard || !isValidMarketPrice(sellPrice, sellCard)) return;
   const id = sellCard.id;
   const name = sellCard.name;
   const price = sellPrice;
@@ -5235,7 +5142,7 @@ $("sell").addEventListener("click", ev => {
   if(ev.target.closest("#sellClose")){ $("sell").close(); return; }
   if(ev.target.closest("#sellNext")){
     const raw = readSellPrice();
-    if(!isValidMarketPrice(raw)){
+    if(!isValidMarketPrice(raw, sellCard)){
       updateSellPayoutHint();
       const input = $("sellPriceInput");
       if(input) input.focus();
@@ -5412,8 +5319,8 @@ function updateOfferHint(){
   const hint = $("offerHint");
   if(!hint || !offerListing) return;
   const raw = readOfferPrice();
-  if(!isValidMarketPrice(raw)){
-    hint.textContent = `Prix minimum : ${MARKET_PRICE_MIN} crédit.`;
+  if(!isValidMarketPrice(raw, offerCard)){
+    hint.textContent = priceFloorWhy(offerCard);
     return;
   }
   if(raw >= offerListing.price){
@@ -5444,10 +5351,12 @@ function renderOfferChooser(){
     (mineTrade ? ` · échange en cours « ${esc(offered ? offered.name : "?")} »` : "") +
     `</p>` +
     `<div class="shop-modes">` +
-    `<button type="button" id="offerModeCredits">` +
-    `<div class="mode-title">Négocier en crédits</div>` +
-    `<div class="mode-sub">Propose un prix inférieur au prix affiché.</div>` +
-    `</button>` +
+    (canCreditOffer(offerListing, offerCard)
+      ? `<button type="button" id="offerModeCredits">` +
+        `<div class="mode-title">Négocier en crédits</div>` +
+        `<div class="mode-sub">Propose un prix inférieur au prix affiché, au-dessus de la défausse.</div>` +
+        `</button>`
+      : `<p class="hint">Pas de contre-offre en crédits : le prix est déjà au plancher de défausse (${minSellPrice(offerCard)} cr).</p>`) +
     (tradeOk
       ? `<button type="button" id="offerModeTrade">` +
         `<div class="mode-title">Proposer un échange</div>` +
@@ -5458,18 +5367,19 @@ function renderOfferChooser(){
 }
 function renderOfferForm(){
   if(!offerCard || !offerListing) return;
-  if(offerPrice < MARKET_PRICE_MIN){
-    offerPrice = Math.max(MARKET_PRICE_MIN, Math.floor(offerListing.price * 0.8));
-    if(offerPrice >= offerListing.price) offerPrice = Math.max(MARKET_PRICE_MIN, offerListing.price - 1);
+  const floor = minSellPrice(offerCard);
+  if(offerPrice < floor){
+    offerPrice = Math.max(floor, Math.floor(offerListing.price * 0.8));
+    if(offerPrice >= offerListing.price) offerPrice = Math.max(floor, offerListing.price - 1);
   }
   const showBack = canTradeOnListing(offerListing);
   $("offerBody").innerHTML =
     `<div class="shop-bar"><span>Offre en crédits · ${esc(offerCard.name)}</span>` +
     `<button type="button" id="offerClose">Fermer</button></div>` +
-    `<p class="shop-bal">Prix affiché : <b>${offerListing.price} cr</b></p>` +
+    `<p class="shop-bal">Prix affiché : <b>${offerListing.price} cr</b> · plancher ${floor} cr</p>` +
     `<div class="shop-field">` +
     `<label for="offerPriceInput">Ton offre (crédits)</label>` +
-    `<input type="number" id="offerPriceInput" min="${MARKET_PRICE_MIN}" max="${Math.max(MARKET_PRICE_MIN, offerListing.price - 1)}" step="1" value="${offerPrice}">` +
+    `<input type="number" id="offerPriceInput" min="${floor}" max="${Math.max(floor, offerListing.price - 1)}" step="1" value="${offerPrice}">` +
     `</div>` +
     `<p class="shop-bal" id="offerHint"></p>` +
     `<div class="shop-actions">` +
@@ -5496,14 +5406,16 @@ function openOfferDialog(card, listing){
   offerCard = card;
   offerListing = listing;
   const existing = pendingOffersForListing(listing.id).find(o => isMe(o.buyer));
-  offerPrice = existing ? existing.price : Math.max(MARKET_PRICE_MIN, Math.floor(listing.price * 0.8));
-  if(offerPrice >= listing.price) offerPrice = Math.max(MARKET_PRICE_MIN, listing.price - 1);
+  const floor = minSellPrice(card);
+  offerPrice = existing ? existing.price : Math.max(floor, Math.floor(listing.price * 0.8));
+  if(offerPrice >= listing.price) offerPrice = Math.max(floor, listing.price - 1);
   if(canTradeOnListing(listing)) renderOfferChooser();
-  else renderOfferForm();
+  else if(canCreditOffer(listing, card)) renderOfferForm();
+  else return;
   if(!$("offer").open) $("offer").showModal();
 }
 async function finishOffer(){
-  if(!offerCard || !offerListing || !isValidMarketPrice(offerPrice)) return;
+  if(!offerCard || !offerListing || !isValidMarketPrice(offerPrice, offerCard)) return;
   if(offerPrice >= offerListing.price) return;
   const name = offerCard.name;
   const price = offerPrice;
@@ -5548,7 +5460,7 @@ $("offer").addEventListener("click", ev => {
   }
   if(ev.target.closest("#offerNext")){
     const raw = readOfferPrice();
-    if(!offerListing || !isValidMarketPrice(raw) || raw >= offerListing.price){
+    if(!offerListing || !isValidMarketPrice(raw, offerCard) || raw >= offerListing.price){
       updateOfferHint();
       const input = $("offerPriceInput");
       if(input) input.focus();
@@ -5693,9 +5605,13 @@ function openCardZoom(card, opts={}){
       bits.push(
         `<button type="button" class="primary" data-act="mbuy" data-id="${esc(card.id)}" data-lid="${esc(listing.id)}" ${can ? "" : "disabled"}>Acheter · ${listing.price} cr</button>`
       );
-      bits.push(
-        `<button type="button" data-act="moffer" data-id="${esc(card.id)}" data-lid="${esc(listing.id)}">Contre-offre</button>`
-      );
+      if(canCreditOffer(listing, card) || listing.seller !== "npc"){
+        bits.push(
+          `<button type="button" data-act="moffer" data-id="${esc(card.id)}" data-lid="${esc(listing.id)}">Contre-offre</button>`
+        );
+      } else {
+        bits.push(`<div class="hint">Prix au plancher de défausse (${minSellPrice(card)} cr) — pas de contre-offre.</div>`);
+      }
       const mineOff = pendingOffersForListing(listing.id).find(o => isMe(o.buyer));
       if(mineOff){
         bits.push(`<div class="hint">Ton offre en cours : ${mineOff.price} cr</div>`);
@@ -5733,11 +5649,8 @@ function openCardZoom(card, opts={}){
     }
     const listed = myListingsFor(card.id);
     const free = freeCopies(card.id);
-    const bound = boundCopies(card.id);
     const tradable = tradableCopies(card.id);
-    const scrappable = Math.max(0, free - bound);
-    const waiting = !missing && bound > 0 && !fav && scrappable < 1 && tradable < 1;
-    if(!missing && scrappable >= 1 && !fav){
+    if(!missing && free >= 1 && !fav){
       const gain = DESTROY_CREDITS[card.rarete] || 1;
       bits.push(`<button type="button" data-act="destroy" data-id="${esc(card.id)}">Défausser (+${gain} crédits)</button>`);
     } else if(!missing && free < 1){
@@ -5752,7 +5665,6 @@ function openCardZoom(card, opts={}){
     } else if(opts.fromAlbum && !missing && free < 1 && isLineupLocked(card.id) && !fav && competitionUses(null, card.id) < 1){
       bits.push(`<div class="hint">Line-up Arena — vente indisponible.</div>`);
     }
-    if(waiting) bits.push(sellWaitMarkup(uid()));
     if(opts.fromAlbum && fav){
       bits.push(`<div class="hint">Favori — vente, échange et défausse indisponibles.</div>`);
     }
@@ -6397,7 +6309,7 @@ $("menuBtn")?.addEventListener("click", () => {
 $("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
 $("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
-  if(location.hash === "#classeur") location.replace("classeur.html?v=2");
+  if(location.hash === "#classeur") location.replace("classeur.html?v=3");
   else if(location.hash === "#marche") showView("market");
   else showView("booster");
 });
@@ -6456,7 +6368,7 @@ async function boot(){
     await armNextPack();
     setInterval(tickFreePack, 1000);
     if(location.hash === "#classeur"){
-      location.replace("classeur.html?v=2");
+      location.replace("classeur.html?v=3");
       return;
     }
     if(location.hash === "#marche") showView("market");
@@ -6486,6 +6398,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=9"></script>
+<script src="js/mobile-ui.js?v=10"></script>
 </body>
 </html>

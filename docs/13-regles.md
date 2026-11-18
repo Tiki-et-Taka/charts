@@ -40,12 +40,10 @@ Un Diamant est garanti dans les dix premiers boosters, puis au plus tard tous le
 
 Cinq boosters sont offerts à l'inscription. Ensuite, un booster est offert toutes les douze heures, avec deux de retard au maximum, et seulement lorsqu'il n'en reste pas déjà un à ouvrir. Les boosters supplémentaires coûtent 300 crédits chacun.
 
-Détruire une carte rend 2, 6, 20, 60 ou 150 crédits selon la rareté. Une carte favorite, en vente, dans un échange, ou engagée dans un groupe ne se détruit pas. Les cartes d'un booster offert restent liées au compte pendant ses sept premiers jours.
+Détruire une carte rend 2, 6, 20, 60 ou 150 crédits selon la rareté. Une carte favorite, en vente, dans un échange, ou engagée dans un groupe ne se détruit pas.
 
 6. Le marché
 
-Les prix sont des crédits entiers, de 1 à 1 000 000. Une vente prélève 10 % du prix, arrondis, et ces crédits sortent du jeu. En dessous de 5 crédits, la taxe est nulle. Annuler une annonce est gratuit.
+Les prix sont des crédits entiers, de la valeur de défausse à 1 000 000. On ne peut pas vendre, ni proposer, en dessous de ce que la défausse rapporterait. Une vente prélève 10 % du prix, arrondis, et ces crédits sortent du jeu. En dessous de 5 crédits, la taxe est nulle. Annuler une annonce est gratuit.
 
-Une contre-offre doit être strictement inférieure au prix affiché. Elle ne bloque pas les crédits. Un échange porte sur une carte de même rareté, et d'un artiste différent.
-
-Pendant les sept premiers jours, le marché est fermé. Jusqu'à trente jours, le compte est limité à deux ventes, deux achats et un échange par vingt-quatre heures. Au-delà, il n'y a plus de plafond.
+Une contre-offre doit être strictement inférieure au prix affiché, et au moins égale à la valeur de défausse. Elle ne bloque pas les crédits. Un échange porte sur une carte de même rareté, et d'un artiste différent.

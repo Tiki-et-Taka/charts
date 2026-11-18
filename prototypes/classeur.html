@@ -727,9 +727,9 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=5">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a class="on" href="classeur.html?v=2" aria-current="page">Classeur</a>
-    <a href="booster.html?v=5#marche">Marché</a>
+    <a href="booster.html?v=6">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a class="on" href="classeur.html?v=3" aria-current="page">Classeur</a>
+    <a href="booster.html?v=6#marche">Marché</a>
     <a href="fantasy.html?v=20">Arena</a>
   </nav>
   <div class="top-actions">
@@ -852,7 +852,7 @@
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
 <script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=5"></script>
+<script src="js/charts-state.js?v=6"></script>
 <script src="js/credits-shop.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
 <script src="js/fantasy-history.js?v=6"></script>
@@ -1412,28 +1412,15 @@ function originCopies(got){
   return list.slice(0, n);
 }
 
-function youngDaysLeft(){
-  try {
-    const data = JSON.parse(localStorage.getItem(walletKey(collectionUserId())) || "");
-    const created = Number(data && data.createdAt) || 0;
-    if(!created) return 0;
-    const left = 7 * 24 * 60 * 60 * 1000 - (Date.now() - created);
-    if(left <= 0) return 0;
-    return Math.max(1, Math.ceil(left / (24 * 60 * 60 * 1000)));
-  } catch { return 0; }
-}
-function sellWaitMarkup(){
-  const days = youngDaysLeft();
-  if(!days) return "";
-  const tip = "Cette carte a été ouverte dans un booster offert. Elle ne peut être ni vendue, ni échangée, ni défaussée pendant les 7 premiers jours du compte.";
-  const label = `Vendable dans ${days} ${days > 1 ? "jours" : "jour"}`;
-  return `<span class="sell-wait">${esc(label)}<span class="info-tip" tabindex="0" role="note"><span class="info-mark" aria-hidden="true">i</span><span class="tip">${esc(tip)}</span></span></span>`;
-}
 const SALE_DAY_MS = 24 * 60 * 60 * 1000;
-const SALE_YOUNG_MS = 7 * SALE_DAY_MS;
-const SALE_MATURE_MS = 30 * SALE_DAY_MS;
-const SALE_PRICE_MIN = 1;
 const SALE_DESTROY = { commune: 2, argent: 6, or: 20, platine: 60, diamant: 150 };
+function minSellPrice(card){
+  return SALE_DESTROY[card && card.rarete] || 2;
+}
+function priceFloorWhy(card){
+  const min = minSellPrice(card);
+  return `Prix minimum : ${min} crédit${min > 1 ? "s" : ""} (valeur de défausse).`;
+}
 function loadWalletRaw(){
   try {
     const data = JSON.parse(localStorage.getItem(walletKey()) || "");
@@ -1446,14 +1433,6 @@ function loadWalletRaw(){
 }
 function saveWalletRaw(data){
   localStorage.setItem(walletKey(), JSON.stringify(data));
-}
-function saleTier(){
-  const created = Number(loadWalletRaw().createdAt) || 0;
-  if(!created) return "mature";
-  const age = Date.now() - created;
-  if(age < SALE_YOUNG_MS) return "young";
-  if(age < SALE_MATURE_MS) return "mid";
-  return "mature";
 }
 function competitionUses(cardId){
   return window.ChartsHistory ? ChartsHistory.activeUses(activeUserId, cardId) : 0;
@@ -1480,25 +1459,16 @@ function freeCopies(cardId){
   const n = got ? (got.n || 0) : 0;
   return Math.max(0, n - myListings(cardId).length - lineupUses(cardId));
 }
-function boundCopies(cardId){
-  if(saleTier() !== "young") return 0;
-  const got = loadOwned().got[cardId];
-  if(!got) return 0;
-  const origins = Array.isArray(got.origins) ? got.origins : [];
-  let bound = 0;
-  const n = got.n || 0;
-  for(let i = 0; i < n; i++) if(origins[i] && origins[i].free) bound++;
-  return bound;
-}
 function tradableCopies(cardId){
-  return Math.max(0, freeCopies(cardId) - boundCopies(cardId));
+  return freeCopies(cardId);
 }
 function suggestSalePrice(card){
-  return Math.max(SALE_PRICE_MIN, (SALE_DESTROY[card.rarete] || 2) * 4);
+  const d = minSellPrice(card);
+  return Math.max(d, d * 4);
 }
-function salePayoutText(price){
+function salePayoutText(price, card){
   const p = Math.floor(Number(price) || 0);
-  if(p < SALE_PRICE_MIN) return `Prix minimum : ${SALE_PRICE_MIN} crédit.`;
+  if(p < minSellPrice(card)) return priceFloorWhy(card);
   const tax = Math.round(p * 0.10);
   const pay = Math.max(0, p - tax);
   return tax ? `Tu recevras ${pay} cr (taxe ${tax} cr).` : `Tu recevras ${pay} cr.`;
@@ -1528,16 +1498,6 @@ window.addEventListener("resize", () => {
   const el = $("snackbar");
   if(el && el.classList.contains("show")) pinSnackbar(el);
 });
-function gateSale(){
-  if(saleTier() === "young"){
-    return { ok: false, why: `Compte neuf : le marché entre joueurs s’ouvre dans ${youngDaysLeft()} j.` };
-  }
-  if(saleTier() !== "mid") return { ok: true };
-  const since = Date.now() - SALE_DAY_MS;
-  const n = (loadWalletRaw().acts || []).filter(a => a.k === "list" && a.t >= since).length;
-  if(n >= 2) return { ok: false, why: "Plafond atteint : 2 ventes par 24 h tant que le compte a moins de 30 jours." };
-  return { ok: true };
-}
 function noteSale(){
   const w = loadWalletRaw();
   const since = Date.now() - SALE_DAY_MS;
@@ -1548,7 +1508,8 @@ function noteSale(){
 async function listCardForSale(cardId, price){
   if(window.ChartsState){
     const p = Math.floor(Number(price) || 0);
-    if(p < SALE_PRICE_MIN) return { ok: false, why: `Prix minimum : ${SALE_PRICE_MIN} crédit.` };
+    const listed = catalog.find(c => c.id === cardId);
+    if(p < minSellPrice(listed)) return { ok: false, why: priceFloorWhy(listed) };
     try { await ChartsState.marketAct("create_listing", { p_card_id: cardId, p_price: p }); }
     catch(err){ return { ok: false, why: err.message }; }
     return { ok: true };
@@ -1557,14 +1518,8 @@ async function listCardForSale(cardId, price){
   const p = Math.floor(Number(price) || 0);
   if(!card) return { ok: false, why: "Carte inconnue." };
   if(isFavorite(cardId)) return { ok: false, why: "Cette carte est en favori — retire-la des favoris pour la vendre." };
-  if(p < SALE_PRICE_MIN) return { ok: false, why: `Prix minimum : ${SALE_PRICE_MIN} crédit.` };
-  const gate = gateSale();
-  if(!gate.ok) return gate;
+  if(p < minSellPrice(card)) return { ok: false, why: priceFloorWhy(card) };
   if(tradableCopies(cardId) < 1){
-    if(boundCopies(cardId) > 0){
-      const days = youngDaysLeft();
-      return { ok: false, why: `Vendable dans ${days} ${days > 1 ? "jours" : "jour"}.` };
-    }
     if(lineupUses(cardId) > 0) return { ok: false, why: lineupWhy(cardId) };
     return { ok: false, why: myListings(cardId).length
       ? "Tous tes exemplaires sont déjà en vente."
@@ -1606,9 +1561,10 @@ function paintSellForm(){
   const card = catalog.find(c => c.id === zoomCardId);
   if(!el || !card) return;
   const price = suggestSalePrice(card);
+  const floor = minSellPrice(card);
   el.innerHTML =
-    `<label>Prix de vente<input type="number" id="sellPrice" min="${SALE_PRICE_MIN}" step="1" value="${price}"></label>` +
-    `<p class="hint" id="sellHint">${esc(salePayoutText(price))}</p>` +
+    `<label>Prix de vente<input type="number" id="sellPrice" min="${floor}" step="1" value="${price}"></label>` +
+    `<p class="hint" id="sellHint">${esc(salePayoutText(price, card))}</p>` +
     `<button type="button" data-act="sell-ok">Confirmer</button>` +
     `<button type="button" data-act="sell-cancel">Annuler</button>`;
   const input = $("sellPrice");
@@ -1631,7 +1587,7 @@ function paintZoomActions(){
   const listed = myListings(zoomCardId);
   const bits = [];
   const marketOpen = !window.ChartsState || ChartsState.marketOpen;
-  if(marketOpen && tradableCopies(zoomCardId) >= 1 && saleTier() !== "young"){
+  if(marketOpen && tradableCopies(zoomCardId) >= 1){
     bits.push(`<button type="button" data-act="sell">Vendre</button>`);
   } else if(freeCopies(zoomCardId) < 1 && lineupUses(zoomCardId) > 0){
     bits.push(`<p class="hint">${competitionUses(zoomCardId) > 0
@@ -1697,12 +1653,10 @@ function paintZoomOrigin(){
     `<button type="button" class="zoom-origin-nav" data-origin-step="${step}" aria-label="${name}"${
       (step < 0 && zoomOriginIndex <= 0) || (step > 0 && zoomOriginIndex >= list.length - 1) ? " disabled" : ""
     }>${glyph}</button>`;
-  const wait = list[zoomOriginIndex] && list[zoomOriginIndex].free ? sellWaitMarkup() : "";
   el.innerHTML =
     (multi ? nav(-1, "Exemplaire précédent", "‹") : "")
     + `<span class="zoom-origin-text">${esc(label + count)}</span>`
-    + (multi ? nav(1, "Exemplaire suivant", "›") : "")
-    + wait;
+    + (multi ? nav(1, "Exemplaire suivant", "›") : "");
 }
 
 function stepZoomOrigin(step){
@@ -1902,7 +1856,8 @@ $("zoom").addEventListener("click", ev => {
 $("zoom").addEventListener("input", ev => {
   if(ev.target.id !== "sellPrice") return;
   const hint = $("sellHint");
-  if(hint) hint.textContent = salePayoutText(ev.target.value);
+  const card = catalog.find(c => c.id === zoomCardId);
+  if(hint) hint.textContent = salePayoutText(ev.target.value, card);
 });
 
 const menuBtn = $("menuBtn");
@@ -1976,6 +1931,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
-<script src="js/mobile-ui.js?v=7"></script>
+<script src="js/mobile-ui.js?v=10"></script>
 </body>
 </html>

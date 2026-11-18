@@ -240,9 +240,9 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=5">Booster</a>
-    <a href="classeur.html?v=2">Classeur</a>
-    <a href="booster.html?v=5#marche">Marché</a>
+    <a href="booster.html?v=6">Booster</a>
+    <a href="classeur.html?v=3">Classeur</a>
+    <a href="booster.html?v=6#marche">Marché</a>
     <a class="on" href="fantasy.html?v=20" aria-current="page">Arena</a>
   </nav>
   <div class="top-actions">
@@ -298,7 +298,7 @@
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
 <script src="js/accounts.js?v=6"></script>
-<script src="js/charts-state.js?v=5"></script>
+<script src="js/charts-state.js?v=6"></script>
 <script src="js/credits-shop.js?v=7"></script>
 <script src="js/weekly-listens.js?v=7"></script>
 <script src="js/fantasy-lock.js?v=3"></script>
@@ -319,7 +319,7 @@ function esc(s){
 function playerLink(id, pseudo){
   const name = pseudo || ChartsAccounts.name(id);
   if(!id) return esc(name);
-  return `<a class="player-link" href="classeur.html?v=2&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="player-link" href="classeur.html?v=3&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function rankHtml(rank){
   return rank === 1 ? `1<sup>er</sup>` : `${rank.toLocaleString("fr-FR")}<sup>e</sup>`;
@@ -443,6 +443,6 @@ if(window.ChartsNotif) ChartsNotif.bind({ getUserId: () => activeUserId });
 loadActiveUser();
 render();
 </script>
-<script src="js/mobile-ui.js?v=4"></script>
+<script src="js/mobile-ui.js?v=10"></script>
 </body>
 </html>
