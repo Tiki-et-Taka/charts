@@ -1617,7 +1617,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=19">
+<link rel="stylesheet" href="css/mobile.css?v=20">
 <style>
 @media (max-width: 820px) {
   body:has(.stage):not(.album):not(.market) {
@@ -1667,21 +1667,32 @@
     align-self: end !important;
     margin-bottom: 4px !important;
   }
+  .hand,
   .hand.one-by-one {
+    zoom: 1 !important;
+  }
+  .hand.one-by-one {
+    container-type: size;
     top: 8px !important;
-    bottom: calc(var(--mobile-tabbar-h, 128px) + 16px) !important;
-    left: 8px !important;
-    right: 8px !important;
+    bottom: calc(var(--mobile-tabbar-h, 140px) + 12px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    display: grid !important;
+    place-items: center !important;
     justify-content: center !important;
     align-items: center !important;
     overflow: hidden !important;
   }
   .hand.one-by-one .slot-card {
-    --s: var(--fit-s, min(calc((100vw - 32px) / 260px), calc((100dvh - var(--mobile-tabbar-h, 128px) - 176px) / 364px)));
+    --s: var(--fit-s, 0.52);
     width: calc(260px * var(--s)) !important;
     height: calc(364px * var(--s)) !important;
     max-width: 100%;
     max-height: 100%;
+  }
+  .hand.one-by-one .face .card {
+    transform: scale(var(--s)) !important;
+    transform-origin: top left !important;
   }
   .hand.one-by-one .slot-card.to-album {
     opacity: 0 !important;
@@ -2221,25 +2232,42 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 function isMobileUi(){
   return !!(window.ChartsMobile && ChartsMobile.on()) || matchMedia("(max-width: 820px)").matches;
 }
+function resetHandFit(){
+  if(!hand) return;
+  ["bottom", "top", "left", "right", "zoom", "--s", "--fit-s"].forEach(p => {
+    hand.style.removeProperty(p);
+  });
+}
 function fitOneByOneSlots(){
   if(!hand || !hand.classList.contains("one-by-one")) return;
   if(window.ChartsMobile && typeof ChartsMobile.syncTabbar === "function"){
     ChartsMobile.syncTabbar();
   }
+  const stageEl = document.getElementById("stage") || hand.parentElement;
   const bar = document.getElementById("mobileTabBar");
   const vv = window.visualViewport;
-  const viewH = window.innerHeight;
-  const visBottom = vv ? vv.offsetTop + vv.height : viewH;
-  const barTop = bar ? bar.getBoundingClientRect().top : visBottom;
-  const occluded = Math.max(0, viewH - Math.min(barTop, visBottom));
-  hand.style.bottom = (occluded + 16) + "px";
-  const r = hand.getBoundingClientRect();
-  const pad = 16;
-  const visibleH = Math.min(r.bottom, barTop, visBottom) - r.top;
-  const s = Math.min((r.width - pad) / 260, (visibleH - pad) / 364);
+  const viewBottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
+  const stageBox = stageEl ? stageEl.getBoundingClientRect() : hand.getBoundingClientRect();
+  const barTop = bar ? bar.getBoundingClientRect().top : viewBottom;
+  const holeBottom = Math.min(barTop, viewBottom);
+  const inset = 10;
+  const bottom = Math.max(inset, stageBox.bottom - holeBottom + inset);
+  hand.style.setProperty("zoom", "1", "important");
+  hand.style.setProperty("top", inset + "px", "important");
+  hand.style.setProperty("left", inset + "px", "important");
+  hand.style.setProperty("right", inset + "px", "important");
+  hand.style.setProperty("bottom", bottom + "px", "important");
+  const w = hand.clientWidth;
+  const h = hand.clientHeight;
+  const s = Math.min(w / 260, h / 364) * 0.94;
   if(!(s > 0.05) || !isFinite(s)) return;
-  hand.style.setProperty("--s", String(s));
-  hand.style.setProperty("--fit-s", String(s));
+  const sStr = String(Math.round(s * 1000) / 1000);
+  hand.style.setProperty("--s", sStr);
+  hand.style.setProperty("--fit-s", sStr);
+  hand.querySelectorAll(".slot-card").forEach(el => {
+    el.style.setProperty("--s", sStr);
+    el.style.setProperty("--fit-s", sStr);
+  });
 }
 function fitOpenSlots(){
   if(!hand || !hand.children.length) return;
@@ -4117,8 +4145,7 @@ function refreshCount(){
 function showSpentPack(){
   hideEmptyPack();
   hand.className = "hand";
-  hand.style.removeProperty("bottom");
-  hand.style.removeProperty("--fit-s");
+  resetHandFit();
   hand.innerHTML = "";
   againRow.hidden = true;
   setPackStackVisible(true);
@@ -4174,8 +4201,7 @@ async function stashHand(){
   intro.textContent = "Cartes rangées dans le classeur.";
   await wait(reduced ? 60 : 300);
   hand.className = "hand";
-  hand.style.removeProperty("bottom");
-  hand.style.removeProperty("--fit-s");
+  resetHandFit();
   hand.innerHTML = "";
   await armNextPack();
 }
@@ -4500,8 +4526,7 @@ function armPack(){
   $("crowd").innerHTML = "";
   $("flashes").innerHTML = "";
   hand.className = "hand";
-  hand.style.removeProperty("bottom");
-  hand.style.removeProperty("--fit-s");
+  resetHandFit();
   hand.innerHTML = "";
   againRow.hidden = true;
   hideEmptyPack();
@@ -4575,7 +4600,11 @@ async function openPack(){
       else el.classList.add("wait");
     });
     fitOneByOneSlots();
-    requestAnimationFrame(fitOneByOneSlots);
+    requestAnimationFrame(() => {
+      fitOneByOneSlots();
+      requestAnimationFrame(fitOneByOneSlots);
+    });
+    setTimeout(fitOneByOneSlots, 80);
     intro.textContent = "Touche la carte pour la retourner.";
   } else {
     fitOpenSlots();
@@ -6457,6 +6486,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=8"></script>
+<script src="js/mobile-ui.js?v=9"></script>
 </body>
 </html>

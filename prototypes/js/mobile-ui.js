@@ -39,9 +39,9 @@
   }
 
   function tabHref(id) {
-    if (id === "boosters") return "booster.html?v=4";
+    if (id === "boosters") return "booster.html?v=5";
     if (id === "classeur") return "classeur.html?v=2";
-    if (id === "marche") return "booster.html?v=4#marche";
+    if (id === "marche") return "booster.html?v=5#marche";
     return "fantasy.html?v=20";
   }
 

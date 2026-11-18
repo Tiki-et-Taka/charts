@@ -9,7 +9,7 @@
     zoom: 1 !important;
     --ui-scale: 1;
     --ui-unscale: 1;
-    --mobile-tabbar-h: 128px;
+    --mobile-tabbar-h: 140px;
   }
   html, body {
     min-height: 100%;
@@ -508,6 +508,12 @@
     padding: 8px 12px 12px !important;
   }
   header .head-copy h1 { font-size: 20px; }
+  .hand,
+  .hand.one-by-one,
+  .empty-pack,
+  .again-row {
+    zoom: 1 !important;
+  }
   .hand {
     top: 14vh !important;
     bottom: 16vh !important;
@@ -516,10 +522,13 @@
     overflow: visible !important;
   }
   .hand.one-by-one {
+    container-type: size;
     top: 8px !important;
-    bottom: calc(var(--mobile-tabbar-h, 128px) + 16px) !important;
-    left: 8px !important;
-    right: 8px !important;
+    bottom: calc(var(--mobile-tabbar-h, 140px) + 12px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    display: grid !important;
+    place-items: center !important;
     align-items: center !important;
     justify-content: center !important;
     overflow: hidden !important;
@@ -530,13 +539,22 @@
     display: none !important;
   }
   .hand.one-by-one .slot-card {
-    /* --s sans unité : scale() du .card 260×364, borné largeur ET hauteur. */
-    --s: var(--fit-s, min(calc((100vw - 32px) / 260px), calc((100dvh - var(--mobile-tabbar-h, 128px) - 176px) / 364px)));
+    /* --s sans unité, borné à la boîte .hand (barre d’onglets comprise). */
+    --s: var(--fit-s, 0.52);
     width: calc(260px * var(--s)) !important;
     height: calc(364px * var(--s)) !important;
     max-width: 100%;
     max-height: 100%;
     flex: 0 0 auto;
+  }
+  .hand.one-by-one .face .card {
+    transform: scale(var(--s)) !important;
+    transform-origin: top left !important;
+  }
+  @supports (width: 1cqh) {
+    .hand.one-by-one .slot-card {
+      --s: var(--fit-s, min(calc(100cqw / 260px), calc(100cqh / 364px)));
+    }
   }
   .hand.one-by-one .slot-card.to-album {
     opacity: 0 !important;
