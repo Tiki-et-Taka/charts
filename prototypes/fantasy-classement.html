@@ -231,7 +231,7 @@
     .ranking .num { width: 60px; }
   }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=26">
+<link rel="stylesheet" href="css/mobile.css?v=27">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -241,7 +241,7 @@
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <a href="booster.html?v=12">Booster</a>
-    <a href="classeur.html?v=7">Classeur</a>
+    <a href="classeur.html?v=8">Classeur</a>
     <a href="booster.html?v=12#marche">Marché</a>
     <a class="on" href="fantasy.html?v=23" aria-current="page">Arena</a>
   </nav>
@@ -319,7 +319,7 @@ function esc(s){
 function playerLink(id, pseudo){
   const name = pseudo || ChartsAccounts.name(id);
   if(!id) return esc(name);
-  return `<a class="player-link" href="classeur.html?v=7&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="player-link" href="classeur.html?v=8&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function rankHtml(rank){
   return rank === 1 ? `1<sup>er</sup>` : `${rank.toLocaleString("fr-FR")}<sup>e</sup>`;
@@ -443,6 +443,6 @@ if(window.ChartsNotif) ChartsNotif.bind({ getUserId: () => activeUserId });
 loadActiveUser();
 render();
 </script>
-<script src="js/mobile-ui.js?v=18"></script>
+<script src="js/mobile-ui.js?v=19"></script>
 </body>
 </html>

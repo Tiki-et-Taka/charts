@@ -757,7 +757,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=26">
+<link rel="stylesheet" href="css/mobile.css?v=27">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -767,7 +767,7 @@
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <a href="booster.html?v=12">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a class="on" href="classeur.html?v=7" aria-current="page">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a class="on" href="classeur.html?v=8" aria-current="page">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <a href="booster.html?v=12#marche">Marché</a>
     <a href="fantasy.html?v=23">Arena</a>
   </nav>
@@ -1619,6 +1619,44 @@ function paintSellForm(){
     input.select();
   }
 }
+function destroyCopy(cardId){
+  const card = catalog.find(c => c.id === cardId);
+  if(!card) return { ok: false, why: "Carte inconnue." };
+  if(isFavorite(cardId)){
+    return { ok: false, why: "Carte en favori — retire-la des favoris pour la défausser." };
+  }
+  const data = loadOwned();
+  const got = data.got[cardId];
+  const n = got ? (got.n || 0) : 0;
+  const free = freeCopies(cardId);
+  if(!got || n < 1 || free < 1){
+    if(free < 1 && n >= 1 && lineupUses(cardId) > 0){
+      return { ok: false, why: competitionUses(cardId) > 0
+        ? "Carte en compétition Arena cette semaine — défausse impossible avant lundi."
+        : "Carte dans le line-up Arena — retire-la du groupe pour la défausser." };
+    }
+    return { ok: false, why: free < 1 && n >= 1
+      ? "Exemplaire réservé par une annonce — retire-la d’abord pour défausser."
+      : "Aucun exemplaire à défausser." };
+  }
+  got.n -= 1;
+  if(Array.isArray(got.origins)) got.origins.splice(0, 1);
+  if(got.n < 1){
+    delete data.got[cardId];
+    if(data.fav) delete data.fav[cardId];
+    if(data.fresh) delete data.fresh[cardId];
+  } else {
+    data.got[cardId] = got;
+  }
+  saveOwned(data);
+  const gain = SALE_DESTROY[card.rarete] || 2;
+  const w = loadWalletRaw();
+  w.credits = (Number(w.credits) || 0) + gain;
+  saveWalletRaw(w);
+  if(window.ChartsState) ChartsState.destroyCopy(cardId).catch(() => {});
+  refreshCredits();
+  return { ok: true, gain, left: (data.got[cardId] && data.got[cardId].n) || 0 };
+}
 function paintZoomActions(){
   const el = $("zoomActions");
   if(!el || !zoomCardId) return;
@@ -1626,19 +1664,28 @@ function paintZoomActions(){
     el.innerHTML = "";
     return;
   }
-  if(isFavorite(zoomCardId)){
-    el.innerHTML = `<p class="hint">Favori — vente indisponible.</p>`;
-    return;
-  }
+  const card = catalog.find(c => c.id === zoomCardId);
   const listed = myListings(zoomCardId);
   const bits = [];
   const marketOpen = !window.ChartsState || ChartsState.marketOpen;
-  if(marketOpen && tradableCopies(zoomCardId) >= 1){
-    bits.push(`<button type="button" data-act="sell">Vendre</button>`);
-  } else if(freeCopies(zoomCardId) < 1 && lineupUses(zoomCardId) > 0){
-    bits.push(`<p class="hint">${competitionUses(zoomCardId) > 0
-      ? "En compétition Arena — vente et échange indisponibles avant lundi."
-      : "Line-up Arena — vente indisponible."}</p>`);
+  const fav = isFavorite(zoomCardId);
+  const free = freeCopies(zoomCardId);
+  if(fav){
+    bits.push(`<p class="hint">Favori — vente, échange et défausse indisponibles.</p>`);
+  } else {
+    if(free >= 1 && card){
+      const gain = SALE_DESTROY[card.rarete] || 2;
+      bits.push(`<button type="button" data-act="destroy">Défausser (+${gain} crédits)</button>`);
+    } else if(free < 1 && lineupUses(zoomCardId) > 0){
+      bits.push(`<p class="hint">${competitionUses(zoomCardId) > 0
+        ? "En compétition Arena — défausse, vente et échange indisponibles avant lundi."
+        : "Line-up Arena — retire la carte du groupe pour défausser."}</p>`);
+    } else if(free < 1 && listed.length){
+      bits.push(`<p class="hint">Retire l’annonce pour défausser.</p>`);
+    }
+    if(marketOpen && tradableCopies(zoomCardId) >= 1){
+      bits.push(`<button type="button" data-act="sell">Vendre</button>`);
+    }
   }
   if(listed.length){
     bits.push(`<p class="hint">En vente · ${listed[0].price} cr${listed.length > 1 ? ` · ${listed.length} annonces` : ""}</p>`);
@@ -1647,6 +1694,33 @@ function paintZoomActions(){
   el.innerHTML = bits.join("");
 }
 async function handleZoomSale(act, lid){
+  if(act === "destroy"){
+    const card = catalog.find(c => c.id === zoomCardId);
+    if(!card) return;
+    const gain = SALE_DESTROY[card.rarete] || 2;
+    const ownedN = (loadOwned().got[zoomCardId] || {}).n || 0;
+    const last = ownedN <= 1;
+    const msg = last
+      ? `Défausser « ${card.name} » ? ${gain} crédit${gain > 1 ? "s" : ""} seront crédités.`
+      : `Défausser un exemplaire de « ${card.name} » ? ${gain} crédit${gain > 1 ? "s" : ""} seront crédités.`;
+    if(!confirm(msg)) return;
+    const res = destroyCopy(zoomCardId);
+    if(!res.ok){
+      alert(res.why);
+      paintZoomActions();
+      return;
+    }
+    showSnackbar(`Défaussé · +${res.gain} cr`);
+    if(window.ChartsMobile && ChartsMobile.syncBadges) ChartsMobile.syncBadges();
+    if(res.left < 1){
+      closeZoom();
+      render();
+    } else {
+      paintZoomOrigin();
+      paintZoomActions();
+    }
+    return;
+  }
   if(act === "sell"){
     paintSellForm();
     return;
@@ -1978,6 +2052,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
-<script src="js/mobile-ui.js?v=18"></script>
+<script src="js/mobile-ui.js?v=19"></script>
 </body>
 </html>

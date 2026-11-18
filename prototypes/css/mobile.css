@@ -781,4 +781,15 @@
   .drawer {
     width: min(100vw, 360px);
   }
+
+  /* Zoom au-dessus de la barre d’onglets, pour garder Vendre / Défausser accessibles. */
+  .zoom,
+  #zoom {
+    z-index: 90 !important;
+    overflow: auto !important;
+  }
+  .zoom-actions button,
+  #zoomActions button {
+    min-height: 44px;
+  }
 }
