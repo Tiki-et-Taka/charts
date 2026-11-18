@@ -483,13 +483,21 @@
     padding-bottom: 0 !important;
     overflow: hidden !important;
   }
+  html:has(body.market),
+  html:has(body.album) {
+    height: auto !important;
+    min-height: 100%;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
   body.album,
   body.market {
     display: block !important;
     height: auto !important;
-    min-height: 100svh;
-    overflow: auto !important;
+    min-height: calc(100svh + 1px) !important;
+    overflow: visible !important;
     overflow-x: hidden !important;
+    overscroll-behavior-y: auto !important;
     padding-bottom: calc(86px + var(--app-sab, 0px)) !important;
   }
   body.album .stage,
