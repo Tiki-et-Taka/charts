@@ -490,6 +490,19 @@
     grid-row: 2;
     width: min(46vw, 168px) !important;
   }
+  .pack .hint {
+    left: 4%;
+    right: 4%;
+    gap: 5px;
+    font-size: 9px;
+    letter-spacing: .05em;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+  .pack .hint-mob {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
   .pack-buy {
     min-height: 44px;
     height: 44px;
