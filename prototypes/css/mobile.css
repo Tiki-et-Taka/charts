@@ -675,6 +675,22 @@
     font-size: 8px !important;
     letter-spacing: .04em !important;
   }
+  .stats {
+    position: relative;
+    overflow: visible;
+  }
+  .stat { overflow: visible; }
+  .info-chip-wrap { position: static; }
+  .info-tip,
+  .info-tip.align-left {
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    top: calc(100% + 6px) !important;
+    z-index: 20;
+    box-sizing: border-box;
+  }
 
   /* —— Auth / légal —— */
   .auth { padding: 24px 16px 96px !important; }
