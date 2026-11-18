@@ -2138,6 +2138,7 @@ function setMenuOpen(open){
   }
 }
 const STARTER_PACKS = 5;
+const STARTER_CREDITS = 50;
 const FREE_PACK_MS = 12 * 60 * 60 * 1000;
 const FREE_PACK_CATCHUP_MAX = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -2658,6 +2659,7 @@ function ensureWallet(){
   if(!w.starter){
     w.packs += STARTER_PACKS;
     w.freePacks += STARTER_PACKS;
+    w.credits = Math.max(0, Number(w.credits) || 0) + STARTER_CREDITS;
     w.starter = true;
     w.createdAt = now;
     w.nextFreeAt = now + FREE_PACK_MS;

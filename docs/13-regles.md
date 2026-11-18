@@ -38,7 +38,7 @@ Cinq cartes par booster : une ou deux Argent, le reste en Commune, et une carte 
 
 Un Diamant est garanti dans les dix premiers boosters, puis au plus tard tous les quarante. Un Platine arrive au plus tard tous les vingt.
 
-Cinq boosters sont offerts à l'inscription. Ensuite, un booster est offert toutes les douze heures, avec deux de retard au maximum, et seulement lorsqu'il n'en reste pas déjà un à ouvrir. Les boosters supplémentaires coûtent 300 crédits chacun.
+Cinq boosters et 50 crédits sont offerts à l'inscription. Ensuite, un booster est offert toutes les douze heures, avec deux de retard au maximum, et seulement lorsqu'il n'en reste pas déjà un à ouvrir. Les boosters supplémentaires coûtent 300 crédits chacun.
 
 Détruire une carte rend 2, 6, 20, 60 ou 150 crédits selon la rareté. Une carte favorite, en vente, dans un échange, ou engagée dans un groupe ne se détruit pas.
 

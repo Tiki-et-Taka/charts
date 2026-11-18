@@ -493,18 +493,23 @@
     line-height: 1.35;
     letter-spacing: .02em;
   }
-  .welcome a {
+  .welcome a,
+  .welcome button {
+    appearance: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: var(--accent);
     color: var(--accent-ink);
+    border: 0;
     text-decoration: none;
+    font: inherit;
     font-weight: 600;
     letter-spacing: .12em;
     text-transform: uppercase;
     font-size: 13px;
     padding: 12px 18px;
+    cursor: pointer;
   }
 </style>
 <link rel="stylesheet" href="css/mobile.css?v=6">
@@ -574,6 +579,10 @@
 
 <dialog class="welcome" id="welcome" aria-labelledby="welcomeText">
   <p id="welcomeText">Bienvenu sur CHARTS ! Collectionne dès maintenant tes artistes préférés et créé les groupes de tes rêves ! Pour commencer sur de bonnes bases, nous t'offrons 5 boosters.</p>
+  <button type="button" id="welcomeNext">Continuer</button>
+</dialog>
+<dialog class="welcome" id="welcomeCredits" aria-labelledby="welcomeCreditsText">
+  <p id="welcomeCreditsText">50 crédits viennent d’être ajoutés à ton compte. Tu peux t’en servir pour acheter des cartes sur le marché.</p>
   <a href="booster.html?v=6" id="welcomeGo">Ouvrir mes boosters</a>
 </dialog>
 
@@ -681,8 +690,11 @@ function freshCount(){
 function welcomeKey(){
   return `charts.s1.${activeUserId}.welcomeSeen`;
 }
-function markWelcomeSeen(){
-  if(activeUserId) localStorage.setItem(welcomeKey(), "1");
+function welcomeStep(){
+  return localStorage.getItem(welcomeKey()) || "";
+}
+function markWelcomeSeen(step){
+  if(activeUserId) localStorage.setItem(welcomeKey(), step || "done");
 }
 function isFirstVisit(){
   if(!activeUserId) return false;
@@ -691,24 +703,40 @@ function isFirstVisit(){
     if(owned && owned.got && Object.keys(owned.got).length) return false;
   } catch {}
   const w = readWallet();
-  if(w && Number(w.credits) > 0) return false;
   const packs = Math.max(0, Number(w && w.packs) || 0);
   if(packs !== 5) return false;
   const created = Number(w && w.createdAt) || 0;
   if(created && Date.now() - created > 6 * 60 * 60 * 1000) return false;
   return true;
 }
+function closeWelcomeDialogs(){
+  for(const id of ["welcome", "welcomeCredits"]){
+    const dlg = document.getElementById(id);
+    if(dlg && dlg.open) dlg.close();
+  }
+}
+function showWelcomeCredits(){
+  const packs = document.getElementById("welcome");
+  const credits = document.getElementById("welcomeCredits");
+  if(packs && packs.open) packs.close();
+  if(credits && !credits.open) credits.showModal();
+}
 function maybeWelcome(){
-  const dlg = document.getElementById("welcome");
-  if(!dlg || !activeUserId) return;
-  if(localStorage.getItem(welcomeKey())) return;
+  const packs = document.getElementById("welcome");
+  const credits = document.getElementById("welcomeCredits");
+  if(!packs || !credits || !activeUserId) return;
+  const step = welcomeStep();
+  if(step === "done" || step === "1") return;
   if(!isFirstVisit()){
-    markWelcomeSeen();
-    if(dlg.open) dlg.close();
+    markWelcomeSeen("done");
+    closeWelcomeDialogs();
     return;
   }
-  if(!dlg.open) dlg.showModal();
-  markWelcomeSeen();
+  if(step === "packs"){
+    showWelcomeCredits();
+    return;
+  }
+  if(!packs.open) packs.showModal();
 }
 function switchUser(nextId){
   if(!knownUser(nextId)) return false;
@@ -749,7 +777,12 @@ if(window.ChartsNotif){
 }
 loadActiveUser();
 document.getElementById("welcome").addEventListener("cancel", ev => ev.preventDefault());
-document.getElementById("welcomeGo").addEventListener("click", () => markWelcomeSeen());
+document.getElementById("welcomeCredits").addEventListener("cancel", ev => ev.preventDefault());
+document.getElementById("welcomeNext").addEventListener("click", () => {
+  markWelcomeSeen("packs");
+  showWelcomeCredits();
+});
+document.getElementById("welcomeGo").addEventListener("click", () => markWelcomeSeen("done"));
 document.addEventListener("charts:credits-changed", () => {
   refreshCredits();
   refreshPacks();
