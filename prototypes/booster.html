@@ -4098,6 +4098,8 @@ function refreshCount(){
 function showSpentPack(){
   hideEmptyPack();
   hand.className = "hand";
+  hand.style.removeProperty("bottom");
+  hand.style.removeProperty("--fit-s");
   hand.innerHTML = "";
   againRow.hidden = true;
   setPackStackVisible(true);
@@ -4153,6 +4155,8 @@ async function stashHand(){
   intro.textContent = "Cartes rangées dans le classeur.";
   await wait(reduced ? 60 : 300);
   hand.className = "hand";
+  hand.style.removeProperty("bottom");
+  hand.style.removeProperty("--fit-s");
   hand.innerHTML = "";
   await armNextPack();
 }
@@ -4477,6 +4481,8 @@ function armPack(){
   $("crowd").innerHTML = "";
   $("flashes").innerHTML = "";
   hand.className = "hand";
+  hand.style.removeProperty("bottom");
+  hand.style.removeProperty("--fit-s");
   hand.innerHTML = "";
   againRow.hidden = true;
   hideEmptyPack();
