@@ -45,19 +45,16 @@
   }
 
   function tabHref(id) {
-    if (id === "boosters") return "booster.html?v=8";
-    if (id === "classeur") return "classeur.html?v=5";
-    if (id === "marche") return "booster.html?v=8#marche";
-    return "fantasy.html?v=21";
+    if (id === "boosters") return "booster.html?v=9";
+    if (id === "classeur") return "classeur.html?v=6";
+    if (id === "marche") return "booster.html?v=9#marche";
+    return "fantasy.html?v=22";
   }
 
   function injectBar() {
     if (document.getElementById("mobileTabBar")) return;
     if (/connexion|legal/.test(location.pathname)) return;
     var cur = pageKey();
-    var shell = document.createElement("div");
-    shell.id = "mobileTabShell";
-    shell.className = "mobile-tab-shell";
     var nav = document.createElement("nav");
     nav.id = "mobileTabBar";
     nav.className = "mobile-tabbar";
@@ -73,8 +70,7 @@
         '<a href="legal/regles.html">Règles</a>' +
         '<a href="legal/index.html?v=2">Mentions légales</a>' +
       "</nav>";
-    shell.appendChild(nav);
-    document.body.appendChild(shell);
+    document.body.appendChild(nav);
     var src = document.getElementById("packsBadge") || document.getElementById("packTileBadge");
     var boost = nav.querySelector('.mobile-tab[data-tab="boosters"]');
     if (src && boost && !src.hidden) {

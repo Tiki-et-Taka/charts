@@ -1,7 +1,6 @@
 /* Couche mobile uniquement — le bureau n’est pas affecté. */
 .mobile-only,
 .mobile-tabbar,
-.mobile-tab-shell,
 .mobile-filt-veil,
 .hint-mob { display: none !important; }
 
@@ -78,35 +77,15 @@
     touch-action: manipulation;
   }
 
-  /* Coque 100lvh : la barre reste en bas du grand viewport, pas de la barre Firefox. */
-  .mobile-tab-shell {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: flex-end;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    height: 100lvh;
-    max-height: 100lvh;
-    z-index: 80;
-    pointer-events: none;
-    background: transparent;
-  }
   .mobile-tabbar {
     display: flex !important;
     flex-direction: column;
-    position: relative;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 80;
     height: auto;
-    flex: 0 0 auto;
-    overflow: hidden;
     padding: 0 0 var(--app-sab, 0px);
     box-sizing: border-box;
     background: rgba(13, 13, 13, .97);
