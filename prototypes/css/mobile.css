@@ -608,6 +608,22 @@
     padding: 14px !important;
     gap: 12px !important;
   }
+  .comp-meta {
+    white-space: nowrap !important;
+    font-size: 9px !important;
+    letter-spacing: .02em !important;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .comp-title {
+    white-space: nowrap !important;
+    font-size: clamp(14px, 4.4vw, 22px) !important;
+    letter-spacing: .015em !important;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .comp-actions {
     align-items: stretch !important;
     width: 100%;
