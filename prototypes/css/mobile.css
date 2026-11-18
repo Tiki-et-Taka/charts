@@ -458,23 +458,28 @@
     overflow: visible !important;
   }
   .hand.one-by-one {
-    top: 0 !important;
-    bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
-    left: 0 !important;
-    right: 0 !important;
+    top: 8px !important;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 8px !important;
+    right: 8px !important;
     align-items: center !important;
     justify-content: center !important;
     overflow: hidden !important;
     gap: 0 !important;
+    padding: 0 !important;
+    container-type: size;
   }
   .hand.one-by-one .slot-card.wait {
     display: none !important;
   }
   .hand.one-by-one .slot-card {
-    --card-w: min(82vw, 300px);
-    --s: calc(var(--card-w) / 260);
-    width: var(--card-w) !important;
-    height: calc(var(--card-w) * 364 / 260) !important;
+    /* --s sans unité : scale() du .card 260×364, borné largeur ET hauteur. */
+    --s: var(--fit-s, min(calc(100cqw / 260px), calc(100cqh / 364px), calc((100vw - 32px) / 260px), calc((100dvh - 220px) / 364px)));
+    width: calc(260px * var(--s)) !important;
+    height: calc(364px * var(--s)) !important;
+    max-width: 100%;
+    max-height: 100%;
+    flex: 0 0 auto;
   }
   .hand.one-by-one .slot-card.to-album {
     opacity: 0 !important;
