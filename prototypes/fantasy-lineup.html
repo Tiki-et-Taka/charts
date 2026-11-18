@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -800,7 +800,7 @@
           <span class="info-chip-wrap">
             <button type="button" class="info-chip" aria-label="À quoi correspond le score indicatif" aria-describedby="scoreTip">i</button>
             <div class="info-tip align-left" id="scoreTip" role="tooltip">
-              <strong>À titre indicatif</strong>
+              <strong>Score indicatif</strong>
               <p>Score qu’aurait obtenu ce line-up la semaine dernière. Il ne compte pas pour la compétition.</p>
               <p>Le score final de la semaine <span id="scoreTipWeek"></span> sera consultable dans l’onglet « Terminées » des compétitions.</p>
             </div>
@@ -1405,8 +1405,6 @@ function openPick(slotKey){
     });
   });
   renderPickPanel();
-  const q = $("pickQ");
-  if(q) q.focus();
 }
 
 function renderSlots(){
