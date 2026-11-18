@@ -62,7 +62,7 @@
   .mobile-only { display: flex !important; }
   .hint-desk { display: none !important; }
   .hint-mob { display: inline !important; }
-  button, a, .fchip, .mobile-tab, .slot-card, .pack-buy, .chip {
+  button, a, .fchip, .mobile-tab, .slot-card, .pack-buy, .chip, .rare-letter {
     touch-action: manipulation;
   }
 
@@ -275,6 +275,51 @@
     min-height: 44px;
     font-size: 16px !important;
     padding: 10px 12px !important;
+  }
+  .filters .filt-row.filt-row-rare-letters {
+    display: flex !important;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+    gap: 6px;
+  }
+  .rare-letters {
+    display: flex;
+    width: 100%;
+    gap: 6px;
+  }
+  .rare-letter {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 40px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    border: 1px solid #2a2a2a;
+    background: #161616;
+    font-family: "Oswald", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .rare-letter[data-rare="commune"] { color: #8A9099; }
+  .rare-letter[data-rare="argent"] { color: #C5CDD3; }
+  .rare-letter[data-rare="or"] { color: #C4A056; }
+  .rare-letter[data-rare="platine"] { color: #E4EAEF; }
+  .rare-letter[data-rare="diamant"] { color: #E8D5A3; }
+  .rare-letter.on {
+    background: #1c1c1c;
+  }
+  .rare-letter.on[data-rare="commune"] { border-color: #8A9099; box-shadow: inset 0 -2px 0 #8A9099; }
+  .rare-letter.on[data-rare="argent"] { border-color: #C5CDD3; box-shadow: inset 0 -2px 0 #C5CDD3; }
+  .rare-letter.on[data-rare="or"] { border-color: #C4A056; box-shadow: inset 0 -2px 0 #C4A056; }
+  .rare-letter.on[data-rare="platine"] { border-color: #E4EAEF; box-shadow: inset 0 -2px 0 #E4EAEF; }
+  .rare-letter.on[data-rare="diamant"] { border-color: #E8D5A3; box-shadow: inset 0 -2px 0 #E8D5A3; }
+  body.filt-sheet-open .filters .filt-row.filt-row-rare-letters {
+    display: none !important;
   }
   .filters.is-open {
     position: static;

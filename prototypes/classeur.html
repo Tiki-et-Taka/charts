@@ -704,7 +704,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=6">
+<link rel="stylesheet" href="css/mobile.css?v=13">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -770,6 +770,15 @@
       <button type="button" class="fchip" id="newOnly" aria-pressed="false">Nouvelles</button>
       <button type="button" class="fchip" id="favOnly" aria-pressed="false">Favoris</button>
       <button type="button" class="fchip filt-mark-seen" id="seeAllNew">Tout marquer comme vu</button>
+    </div>
+    <div class="filt-row filt-row-rare-letters mobile-only">
+      <div class="rare-letters" id="rareLetters" role="group" aria-label="Rareté">
+        <button type="button" class="rare-letter" data-rare="commune" aria-pressed="false" aria-label="Commune" title="Commune">C</button>
+        <button type="button" class="rare-letter" data-rare="argent" aria-pressed="false" aria-label="Argent" title="Argent">A</button>
+        <button type="button" class="rare-letter" data-rare="or" aria-pressed="false" aria-label="Or" title="Or">O</button>
+        <button type="button" class="rare-letter" data-rare="platine" aria-pressed="false" aria-label="Platine" title="Platine">P</button>
+        <button type="button" class="rare-letter" data-rare="diamant" aria-pressed="false" aria-label="Diamant" title="Diamant">D</button>
+      </div>
     </div>
   </section>
 
@@ -1284,6 +1293,14 @@ function buildFilterChips(){
       `<button type="button" class="fchip${filterRare === r ? " on" : ""}" data-rare="${r}">${TIERS[r].label} (${c.byRare[r] || 0})</button>`
     )
   ].join("");
+  const letters = $("rareLetters");
+  if(letters){
+    letters.innerHTML = RARE_ORDER.map(r => {
+      const on = filterRare === r;
+      const label = TIERS[r].label;
+      return `<button type="button" class="rare-letter${on ? " on" : ""}" data-rare="${r}" aria-pressed="${on ? "true" : "false"}" aria-label="${esc(label)}" title="${esc(label)}">${esc(label.charAt(0))}</button>`;
+    }).join("");
+  }
   $("instrChips").innerHTML = [
     `<button type="button" class="fchip${!filterInstr ? " on" : ""}" data-instr="">Tous</button>`,
     ...INSTR_ORDER.map(id =>
@@ -1711,6 +1728,17 @@ $("rareChips").addEventListener("click", ev => {
   page = 1;
   render();
 });
+const rareLetters = $("rareLetters");
+if(rareLetters){
+  rareLetters.addEventListener("click", ev => {
+    const btn = ev.target.closest("[data-rare]");
+    if(!btn) return;
+    const rare = btn.dataset.rare || "";
+    filterRare = filterRare === rare ? "" : rare;
+    page = 1;
+    render();
+  });
+}
 $("instrChips").addEventListener("click", ev => {
   const btn = ev.target.closest("[data-instr]");
   if(!btn) return;
