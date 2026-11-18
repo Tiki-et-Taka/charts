@@ -23,7 +23,49 @@
     document.documentElement.style.setProperty("--mobile-tabbar-h", h + "px");
     return h;
   }
-  window.ChartsMobile = { mq: MQ, on: on, syncTabbar: syncTabbar };
+  function uid() {
+    return window.ChartsAccounts && ChartsAccounts.session ? ChartsAccounts.session() : "";
+  }
+  function readPacks() {
+    try {
+      var me = uid();
+      if (!me) return 0;
+      var data = JSON.parse(localStorage.getItem("charts.s1." + me + ".wallet") || "");
+      return Math.max(0, Number(data && data.packs) || 0);
+    } catch (e) { return 0; }
+  }
+  function readFresh() {
+    try {
+      var me = uid();
+      if (!me) return 0;
+      var data = JSON.parse(localStorage.getItem("charts.s1." + me + ".owned") || "");
+      var got = (data && data.got) || {};
+      return Object.keys((data && data.fresh) || {}).filter(function (id) { return got[id]; }).length;
+    } catch (e) { return 0; }
+  }
+  function setBadge(el, n) {
+    if (!el) return;
+    n = Math.max(0, Number(n) || 0);
+    el.textContent = String(n);
+    if (n < 1) el.setAttribute("hidden", "");
+    else el.removeAttribute("hidden");
+  }
+  function syncBadges() {
+    var packs = readPacks();
+    var fresh = readFresh();
+    setBadge(document.getElementById("packsBadge"), packs);
+    setBadge(document.getElementById("packTileBadge"), packs);
+    if (!/\bjoueur=/.test(location.search)) {
+      setBadge(document.getElementById("albumNewBadge"), fresh);
+      setBadge(document.getElementById("albumTileBadge"), fresh);
+    }
+    var bar = document.getElementById("mobileTabBar");
+    if (bar) {
+      setBadge(bar.querySelector('[data-tab-badge="packs"]'), packs);
+      setBadge(bar.querySelector('[data-tab-badge="album"]'), fresh);
+    }
+  }
+  window.ChartsMobile = { mq: MQ, on: on, syncTabbar: syncTabbar, syncBadges: syncBadges };
 
   var ICO = {
     boosters: '<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(-16 9 13)"><rect x="4.5" y="5" width="10" height="14.5" rx="1.5"/></g><rect x="9.5" y="5" width="10" height="14.5" rx="1.5"/></svg>',
@@ -45,10 +87,10 @@
   }
 
   function tabHref(id) {
-    if (id === "boosters") return "booster.html?v=10";
-    if (id === "classeur") return "classeur.html?v=6";
-    if (id === "marche") return "booster.html?v=10#marche";
-    return "fantasy.html?v=22";
+    if (id === "boosters") return "booster.html?v=11";
+    if (id === "classeur") return "classeur.html?v=7";
+    if (id === "marche") return "booster.html?v=11#marche";
+    return "fantasy.html?v=23";
   }
 
   function injectBar() {
@@ -61,8 +103,11 @@
     nav.setAttribute("aria-label", "Navigation mobile");
     var tabs = TABS.map(function (id) {
       var onCls = cur === id ? " on" : "";
+      var badge = "";
+      if (id === "boosters") badge = '<span class="nav-badge" data-tab-badge="packs" hidden>0</span>';
+      if (id === "classeur") badge = '<span class="nav-badge" data-tab-badge="album" hidden>0</span>';
       return '<a class="mobile-tab' + onCls + '" data-tab="' + id + '" href="' + tabHref(id) + '">' +
-        ICO[id] + "<span>" + LABELS[id] + "</span></a>";
+        ICO[id] + "<span>" + LABELS[id] + "</span>" + badge + "</a>";
     }).join("");
     nav.innerHTML =
       '<div class="mobile-tabs">' + tabs + "</div>" +
@@ -71,14 +116,6 @@
         '<a href="legal/index.html?v=2">Mentions légales</a>' +
       "</nav>";
     document.body.appendChild(nav);
-    var src = document.getElementById("packsBadge") || document.getElementById("packTileBadge");
-    var boost = nav.querySelector('.mobile-tab[data-tab="boosters"]');
-    if (src && boost && !src.hidden) {
-      var badge = document.createElement("span");
-      badge.className = "nav-badge";
-      badge.textContent = src.textContent;
-      boost.appendChild(badge);
-    }
   }
 
   function setupFilters() {
@@ -146,8 +183,14 @@
   function init() {
     injectBar();
     setupFilters();
-    requestAnimationFrame(function () { syncTabbar(true); });
+    syncBadges();
+    requestAnimationFrame(function () {
+      syncTabbar(true);
+      syncBadges();
+    });
   }
+  document.addEventListener("charts:state", syncBadges);
+  document.addEventListener("charts:credits-changed", syncBadges);
   window.addEventListener("hashchange", function () {
     var cur = pageKey();
     document.querySelectorAll(".mobile-tab").forEach(function (a) {

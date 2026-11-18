@@ -1617,7 +1617,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=24">
+<link rel="stylesheet" href="css/mobile.css?v=25">
 <style>
 @media (max-width: 820px) {
   footer.site-foot,
@@ -1714,9 +1714,9 @@
   <nav class="nav-main" role="tablist" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
-    <a href="classeur.html?v=6" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="classeur.html?v=7" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
-    <a href="fantasy.html?v=22">Arena</a>
+    <a href="fantasy.html?v=23">Arena</a>
   </nav>
   <div class="top-actions wallet" aria-label="Compte">
     <div class="notif-wrap" id="notifWrap">
@@ -2017,7 +2017,7 @@ function userName(id){
 function sellerProfileLink(id){
   const name = userName(id);
   if(!knownUser(id)) return esc(name);
-  return `<a class="seller-link" href="classeur.html?v=6&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="seller-link" href="classeur.html?v=7&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function ownedKey(userId){ return `charts.s1.${userId || uid()}.owned`; }
 function walletKey(userId){ return `charts.s1.${userId || uid()}.wallet`; }
@@ -2580,6 +2580,7 @@ function refreshNewBadge(){
   badge.textContent = String(n);
   badge.hidden = n < 1;
   syncSeeAllNewBtn();
+  if(window.ChartsMobile && ChartsMobile.syncBadges) ChartsMobile.syncBadges();
 }
 function formatCountdown(ms){
   const total = Math.max(0, Math.ceil(ms / 60000));
@@ -2707,6 +2708,7 @@ function refreshPacksBadge(){
   const n = loadWallet().packs;
   badge.textContent = String(n);
   badge.hidden = n < 1;
+  if(window.ChartsMobile && ChartsMobile.syncBadges) ChartsMobile.syncBadges();
 }
 function refreshWallet(){
   const w = loadWallet();
@@ -4771,8 +4773,8 @@ again.addEventListener("click", async () => {
   if(phase !== "open") return;
   await stashHand();
 });
-$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=6"; });
-$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=6"; });
+$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=7"; });
+$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=7"; });
 function clampShopQty(n){
   const v = Math.floor(Number(n));
   if(!Number.isFinite(v) || v < 1) return 1;
@@ -6307,7 +6309,7 @@ $("menuBtn")?.addEventListener("click", () => {
 $("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
 $("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
-  if(location.hash === "#classeur") location.replace("classeur.html?v=6");
+  if(location.hash === "#classeur") location.replace("classeur.html?v=7");
   else if(location.hash === "#marche") showView("market");
   else showView("booster");
 });
@@ -6366,7 +6368,7 @@ async function boot(){
     await armNextPack();
     setInterval(tickFreePack, 1000);
     if(location.hash === "#classeur"){
-      location.replace("classeur.html?v=6");
+      location.replace("classeur.html?v=7");
       return;
     }
     if(location.hash === "#marche") showView("market");
@@ -6396,6 +6398,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=16"></script>
+<script src="js/mobile-ui.js?v=17"></script>
 </body>
 </html>

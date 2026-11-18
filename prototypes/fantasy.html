@@ -442,7 +442,7 @@
     .comp-actions { align-items: flex-start; }
   }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=24">
+<link rel="stylesheet" href="css/mobile.css?v=25">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -451,10 +451,10 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=10">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a href="classeur.html?v=6">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
-    <a href="booster.html?v=10#marche">Marché</a>
-    <a class="on" href="fantasy.html?v=22" aria-current="page">Arena</a>
+    <a href="booster.html?v=11">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a href="classeur.html?v=7">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="booster.html?v=11#marche">Marché</a>
+    <a class="on" href="fantasy.html?v=23" aria-current="page">Arena</a>
   </nav>
   <div class="top-actions">
     <div id="notifMount"></div>
@@ -835,6 +835,7 @@ function refreshCredits(){
     albumBadge.textContent = String(fresh);
     albumBadge.hidden = fresh < 1;
   }
+  if(window.ChartsMobile && ChartsMobile.syncBadges) ChartsMobile.syncBadges();
 }
 
 function syncUserUI(){
@@ -990,6 +991,6 @@ setInterval(() => {
 }, 30000);
 document.addEventListener("charts:credits-changed", () => refreshCredits());
 </script>
-<script src="js/mobile-ui.js?v=16"></script>
+<script src="js/mobile-ui.js?v=17"></script>
 </body>
 </html>
