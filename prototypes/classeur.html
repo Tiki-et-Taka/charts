@@ -1262,11 +1262,18 @@ function counts(){
   return {
     owned: ownedCards.length,
     total: catalog.length,
-    pct: catalog.length
-      ? Math.round(ownedCards.length * 1000 / catalog.length) / 10
-      : 0,
     byRare
   };
+}
+
+function pageMetaText(){
+  const c = counts();
+  const nFav = favCount();
+  if(profileUserId){
+    return `${c.owned.toLocaleString("fr-FR")} carte${c.owned === 1 ? "" : "s"} dans la collection`;
+  }
+  return `${c.owned.toLocaleString("fr-FR")} / ${c.total.toLocaleString("fr-FR")} cartes collectées` +
+    (nFav ? ` · ${nFav} favori${nFav > 1 ? "s" : ""}` : "");
 }
 
 function buildFilterChips(){
@@ -1303,12 +1310,7 @@ function scaleBinderCards(){
 
 function render(){
   buildFilterChips();
-  const c = counts();
-  const nFav = favCount();
-  $("pageMeta").textContent = profileUserId
-    ? `${c.owned.toLocaleString("fr-FR")} carte${c.owned === 1 ? "" : "s"} dans la collection`
-    : `${c.owned.toLocaleString("fr-FR")} / ${c.total.toLocaleString("fr-FR")} cartes collectées · taux de complétion ${c.pct} %` +
-      (nFav ? ` · ${nFav} favori${nFav > 1 ? "s" : ""}` : "");
+  $("pageMeta").textContent = pageMetaText();
 
   const list = filteredList();
   const data = loadOwned();
@@ -1810,11 +1812,7 @@ $("grid").addEventListener("click", ev => {
     favBtn.setAttribute("aria-pressed", on ? "true" : "false");
     favBtn.setAttribute("aria-label", on ? "Retirer des favoris" : "Ajouter aux favoris");
     favBtn.title = on ? "Retirer des favoris" : "Ajouter aux favoris";
-    const nFav = favCount();
-    const c = counts();
-    $("pageMeta").textContent =
-      `${c.owned.toLocaleString("fr-FR")} / ${c.total.toLocaleString("fr-FR")} cartes collectées · taux de complétion ${c.pct} %` +
-      (nFav ? ` · ${nFav} favori${nFav > 1 ? "s" : ""}` : "");
+    $("pageMeta").textContent = pageMetaText();
     return;
   }
   if(ev.target.closest(".cell.hole")) return;
