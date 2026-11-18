@@ -92,7 +92,7 @@
       btn.className = "mobile-only mobile-filt-toggle";
       btn.setAttribute("aria-expanded", "false");
       btn.setAttribute("aria-controls", "filtersPanel");
-      btn.textContent = "Filtres";
+      btn.textContent = "Filtres avancés";
       searchRow.appendChild(btn);
     }
     if (!document.getElementById("mobileFiltVeil")) {
