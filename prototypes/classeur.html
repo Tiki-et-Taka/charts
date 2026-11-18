@@ -221,6 +221,45 @@
   }
   .filt-search::placeholder { color: #5a5650; }
 
+  /* Bureau : ordre d’origine. Le HTML a été réordonné pour le panneau mobile. */
+  @media (min-width: 821px) {
+    .filters {
+      grid-template-columns: 1fr auto;
+    }
+    .filt-sheet-panel,
+    .filt-toolbar {
+      display: contents;
+    }
+    .filt-row-rare {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+    .filt-row-instr {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .filt-row-genre {
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
+    .filt-row-search {
+      grid-column: 1;
+      grid-row: 4;
+    }
+    .filt-row-sort {
+      grid-column: 2;
+      grid-row: 4;
+      justify-content: flex-end;
+    }
+    .filt-row-sort .filt-sort {
+      margin-left: auto;
+    }
+    .filt-row-quick {
+      grid-column: 1 / -1;
+      grid-row: 5;
+    }
+  }
+
   .binder {
     position: relative;
     border: 1px solid var(--line-hi);
@@ -728,7 +767,7 @@
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <a href="booster.html?v=6">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a class="on" href="classeur.html?v=3" aria-current="page">Classeur</a>
+    <a class="on" href="classeur.html?v=4" aria-current="page">Classeur</a>
     <a href="booster.html?v=6#marche">Marché</a>
     <a href="fantasy.html?v=20">Arena</a>
   </nav>
@@ -758,7 +797,7 @@
   </header>
 
   <section class="filters" aria-label="Filtres">
-    <div class="filt-row">
+    <div class="filt-row filt-row-rare">
       <span class="filt-label">Rareté</span>
       <div class="filt-chips" id="rareChips" role="group" aria-label="Rareté"></div>
     </div>
@@ -772,11 +811,11 @@
           </select>
         </div>
       </div>
-      <div class="filt-row">
+      <div class="filt-row filt-row-instr">
         <span class="filt-label">Instrument</span>
         <div class="filt-chips" id="instrChips" role="group" aria-label="Instrument"></div>
       </div>
-      <div class="filt-row">
+      <div class="filt-row filt-row-genre">
         <span class="filt-label">Genre</span>
         <div class="filt-chips" id="genreChips" role="group" aria-label="Genre"></div>
       </div>
@@ -1931,6 +1970,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
-<script src="js/mobile-ui.js?v=10"></script>
+<script src="js/mobile-ui.js?v=11"></script>
 </body>
 </html>

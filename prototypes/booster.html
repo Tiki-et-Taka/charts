@@ -1710,7 +1710,7 @@
   <nav class="nav-main" role="tablist" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
-    <a href="classeur.html?v=3" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="classeur.html?v=4" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
     <a href="fantasy.html?v=20">Arena</a>
   </nav>
@@ -2013,7 +2013,7 @@ function userName(id){
 function sellerProfileLink(id){
   const name = userName(id);
   if(!knownUser(id)) return esc(name);
-  return `<a class="seller-link" href="classeur.html?v=3&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="seller-link" href="classeur.html?v=4&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function ownedKey(userId){ return `charts.s1.${userId || uid()}.owned`; }
 function walletKey(userId){ return `charts.s1.${userId || uid()}.wallet`; }
@@ -4775,8 +4775,8 @@ again.addEventListener("click", async () => {
   if(phase !== "open") return;
   await stashHand();
 });
-$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=3"; });
-$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=3"; });
+$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=4"; });
+$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=4"; });
 function clampShopQty(n){
   const v = Math.floor(Number(n));
   if(!Number.isFinite(v) || v < 1) return 1;
@@ -6311,7 +6311,7 @@ $("menuBtn")?.addEventListener("click", () => {
 $("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
 $("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
-  if(location.hash === "#classeur") location.replace("classeur.html?v=3");
+  if(location.hash === "#classeur") location.replace("classeur.html?v=4");
   else if(location.hash === "#marche") showView("market");
   else showView("booster");
 });
@@ -6370,7 +6370,7 @@ async function boot(){
     await armNextPack();
     setInterval(tickFreePack, 1000);
     if(location.hash === "#classeur"){
-      location.replace("classeur.html?v=3");
+      location.replace("classeur.html?v=4");
       return;
     }
     if(location.hash === "#marche") showView("market");
@@ -6400,6 +6400,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=10"></script>
+<script src="js/mobile-ui.js?v=11"></script>
 </body>
 </html>
