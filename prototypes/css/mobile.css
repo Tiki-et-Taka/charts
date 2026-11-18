@@ -450,12 +450,25 @@
   .filt-mark-seen { margin-left: 0 !important; width: 100%; }
 
   /* —— Booster / ouverture —— */
+  /* overflow hidden + overscroll none bloquaient le tire-pour-rafraîchir. */
+  html:has(.stage) {
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
   body:has(.stage):not(.album):not(.market) {
     display: flex !important;
     flex-direction: column;
-    height: 100% !important;
-    height: 100svh !important;
-    overflow: hidden !important;
+    height: auto !important;
+    min-height: calc(100svh + 1px) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
+  body:has(.stage):not(.album):not(.market) .pack-wrap {
+    touch-action: pan-y;
+  }
+  body:has(.stage):not(.album):not(.market) .seal-hit {
+    touch-action: pan-x;
   }
   body:has(.stage):not(.album):not(.market) header.top {
     position: relative !important;
