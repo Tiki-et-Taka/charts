@@ -1734,7 +1734,7 @@
   <nav class="nav-main" role="tablist" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
-    <a href="classeur.html?v=9" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="classeur.html?v=10" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
     <a href="fantasy.html?v=23">Arena</a>
   </nav>
@@ -2037,7 +2037,7 @@ function userName(id){
 function sellerProfileLink(id){
   const name = userName(id);
   if(!knownUser(id)) return esc(name);
-  return `<a class="seller-link" href="classeur.html?v=9&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="seller-link" href="classeur.html?v=10&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function ownedKey(userId){ return `charts.s1.${userId || uid()}.owned`; }
 function walletKey(userId){ return `charts.s1.${userId || uid()}.wallet`; }
@@ -4793,8 +4793,8 @@ again.addEventListener("click", async () => {
   if(phase !== "open") return;
   await stashHand();
 });
-$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=9"; });
-$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=9"; });
+$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=10"; });
+$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=10"; });
 function clampShopQty(n){
   const v = Math.floor(Number(n));
   if(!Number.isFinite(v) || v < 1) return 1;
@@ -5673,12 +5673,10 @@ function openCardZoom(card, opts={}){
     if(!missing && free >= 1 && !fav){
       const gain = DESTROY_CREDITS[card.rarete] || 1;
       bits.push(`<button type="button" data-act="destroy" data-id="${esc(card.id)}">Défausser (+${gain} crédits)</button>`);
-    } else if(!missing && free < 1){
-      bits.push(`<div class="hint">${isLineupLocked(card.id)
-        ? (competitionUses(null, card.id) > 0
-          ? "En compétition Arena — défausse, vente et échange indisponibles avant lundi."
-          : "Line-up Arena — retire la carte du groupe pour défausser.")
-        : "Retire l’annonce pour défausser."}</div>`);
+    } else if(!missing && free < 1 && isLineupLocked(card.id)){
+      bits.push(`<div class="hint">${competitionUses(null, card.id) > 0
+        ? "En compétition Arena — défausse, vente et échange indisponibles avant lundi."
+        : "Line-up Arena — retire la carte du groupe pour défausser."}</div>`);
     }
     if(opts.fromAlbum && tradable >= 1 && !fav && MARKET_OPEN){
       bits.push(`<button type="button" data-act="sell" data-id="${esc(card.id)}">Vendre</button>`);
@@ -6329,7 +6327,7 @@ $("menuBtn")?.addEventListener("click", () => {
 $("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
 $("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
-  if(location.hash === "#classeur") location.replace("classeur.html?v=9");
+  if(location.hash === "#classeur") location.replace("classeur.html?v=10");
   else if(location.hash === "#marche") showView("market");
   else showView("booster");
 });
@@ -6388,7 +6386,7 @@ async function boot(){
     await armNextPack();
     setInterval(tickFreePack, 1000);
     if(location.hash === "#classeur"){
-      location.replace("classeur.html?v=9");
+      location.replace("classeur.html?v=10");
       return;
     }
     if(location.hash === "#marche") showView("market");
@@ -6418,6 +6416,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=21"></script>
+<script src="js/mobile-ui.js?v=22"></script>
 </body>
 </html>

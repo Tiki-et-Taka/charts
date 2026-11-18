@@ -240,9 +240,9 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=14">Booster</a>
-    <a href="classeur.html?v=9">Classeur</a>
-    <a href="booster.html?v=14#marche">Marché</a>
+    <a href="booster.html?v=15">Booster</a>
+    <a href="classeur.html?v=10">Classeur</a>
+    <a href="booster.html?v=15#marche">Marché</a>
     <a class="on" href="fantasy.html?v=23" aria-current="page">Arena</a>
   </nav>
   <div class="top-actions">
@@ -319,7 +319,7 @@ function esc(s){
 function playerLink(id, pseudo){
   const name = pseudo || ChartsAccounts.name(id);
   if(!id) return esc(name);
-  return `<a class="player-link" href="classeur.html?v=9&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="player-link" href="classeur.html?v=10&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function rankHtml(rank){
   return rank === 1 ? `1<sup>er</sup>` : `${rank.toLocaleString("fr-FR")}<sup>e</sup>`;
@@ -443,6 +443,6 @@ if(window.ChartsNotif) ChartsNotif.bind({ getUserId: () => activeUserId });
 loadActiveUser();
 render();
 </script>
-<script src="js/mobile-ui.js?v=21"></script>
+<script src="js/mobile-ui.js?v=22"></script>
 </body>
 </html>

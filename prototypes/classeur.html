@@ -775,9 +775,9 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=14">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a class="on" href="classeur.html?v=9" aria-current="page">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
-    <a href="booster.html?v=14#marche">Marché</a>
+    <a href="booster.html?v=15">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a class="on" href="classeur.html?v=10" aria-current="page">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="booster.html?v=15#marche">Marché</a>
     <a href="fantasy.html?v=23">Arena</a>
   </nav>
   <div class="top-actions">
@@ -1689,8 +1689,6 @@ function paintZoomActions(){
       bits.push(`<p class="hint">${competitionUses(zoomCardId) > 0
         ? "En compétition Arena — défausse, vente et échange indisponibles avant lundi."
         : "Line-up Arena — retire la carte du groupe pour défausser."}</p>`);
-    } else if(free < 1 && listed.length){
-      bits.push(`<p class="hint">Retire l’annonce pour défausser.</p>`);
     }
     if(marketOpen && tradableCopies(zoomCardId) >= 1){
       bits.push(`<button type="button" data-act="sell">Vendre</button>`);
@@ -2061,6 +2059,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
-<script src="js/mobile-ui.js?v=21"></script>
+<script src="js/mobile-ui.js?v=22"></script>
 </body>
 </html>
