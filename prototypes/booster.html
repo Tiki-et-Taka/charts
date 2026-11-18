@@ -1626,7 +1626,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=28">
+<link rel="stylesheet" href="css/mobile.css?v=29">
 <style>
 @media (max-width: 820px) {
   footer.site-foot,
@@ -1874,7 +1874,7 @@
   <div class="market-toolbar">
     <p class="hint" id="marketHint">Prix ≥ défausse (2 / 6 / 20 / 60 / 150) · taxe 10&nbsp;% arrondie (&lt;5 cr = 0) · annuler est gratuit</p>
     <div class="tabs" role="tablist" aria-label="Annonces">
-      <button type="button" class="chip on" data-market-tab="all" role="tab" aria-selected="true">Toutes</button>
+      <button type="button" class="chip on" data-market-tab="all" role="tab" aria-selected="true">Achats</button>
       <button type="button" class="chip" data-market-tab="mine" role="tab" aria-selected="false">Mes ventes</button>
       <button type="button" class="chip" data-market-tab="offers" role="tab" aria-selected="false">Offres reçues<span class="nav-badge offer-badge" id="offersBadge" hidden>Offre !</span></button>
       <button type="button" class="chip" data-market-tab="trades" role="tab" aria-selected="false">Offres envoyées</button>
@@ -6416,6 +6416,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=22"></script>
+<script src="js/mobile-ui.js?v=23"></script>
 </body>
 </html>
