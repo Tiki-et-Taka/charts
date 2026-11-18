@@ -11,9 +11,7 @@
     }
     var bar = document.getElementById("mobileTabBar");
     if (!bar) return 0;
-    var rect = bar.getBoundingClientRect();
-    var h = Math.max(rect.height, window.innerHeight - rect.top);
-    h = Math.ceil(h);
+    var h = Math.ceil(bar.getBoundingClientRect().height);
     document.documentElement.style.setProperty("--mobile-tabbar-h", h + "px");
     return h;
   }
@@ -148,8 +146,16 @@
       a.classList.toggle("on", a.getAttribute("data-tab") === cur);
     });
   });
-  window.addEventListener("resize", syncTabbar);
-  if (window.visualViewport) visualViewport.addEventListener("resize", syncTabbar);
+  var lastW = window.innerWidth;
+  window.addEventListener("resize", function () {
+    if (on() && window.innerWidth === lastW) return;
+    lastW = window.innerWidth;
+    syncTabbar();
+  });
+  window.addEventListener("orientationchange", function () {
+    lastW = window.innerWidth;
+    syncTabbar();
+  });
   if (document.body) init();
   else document.addEventListener("DOMContentLoaded", init);
 })();
