@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Charts — Série 1</title>
 <link rel="icon" type="image/png" href="img/favicon.png?v=2">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Charts">
+<meta name="theme-color" content="#0d0d0d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
@@ -1626,7 +1632,7 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=31">
+<link rel="stylesheet" href="css/mobile.css?v=32">
 <style>
 @media (max-width: 820px) {
   footer.site-foot,
@@ -3913,7 +3919,7 @@ function renderMarketOffersTab(){
   const incomingTrades = myTrades().filter(t => isMe(t.toUser));
   const incomingCredits = myIncomingPendingOffers().sort((a, b) => b.t - a.t);
   if(!incomingTrades.length && !incomingCredits.length){
-    list.innerHTML = `<p class="market-empty">Aucune offre reçue. Contre-offres crédits et échanges sur tes annonces apparaîtront ici.</p>`;
+    list.innerHTML = `<p class="market-empty">Aucune offre reçue.</p>`;
     return;
   }
   const parts = [];
@@ -3942,7 +3948,7 @@ function renderMarketTradesTab(){
   const trades = myTrades().filter(t => isMe(t.fromUser));
   const offers = myOutgoingOffers();
   if(!trades.length && !offers.length){
-    list.innerHTML = `<p class="market-empty">Aucune offre envoyée. Ouvre une annonce joueur → Contre-offre (crédits ou échange).</p>`;
+    list.innerHTML = `<p class="market-empty">Aucune offre envoyée.</p>`;
     return;
   }
   const parts = [];
@@ -6417,5 +6423,6 @@ document.addEventListener("charts:state", () => {
 });
 </script>
 <script src="js/mobile-ui.js?v=23"></script>
+<script src="js/pwa-install.js?v=1"></script>
 </body>
 </html>
