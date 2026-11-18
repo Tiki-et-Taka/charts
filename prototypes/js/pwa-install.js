@@ -47,7 +47,7 @@
     if (!document.querySelector('link[rel="apple-touch-icon"]')) {
       var apple = document.createElement("link");
       apple.rel = "apple-touch-icon";
-      apple.href = "img/apple-touch-icon.png";
+      apple.href = "img/apple-touch-icon.png?v=2";
       document.head.appendChild(apple);
     }
     if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
@@ -128,9 +128,8 @@
     dlg.className = "pwa-install";
     dlg.setAttribute("aria-labelledby", "pwaInstallTitle");
     dlg.innerHTML =
-      '<img class="pwa-install-icon" src="img/pwa-192.png" alt="">' +
-      '<p id="pwaInstallTitle">Ajouter Charts sur ton téléphone ?</p>' +
-      '<p class="pwa-install-sub">Une icône Charts s’installe dans tes applications. Un tap ouvre l’app.</p>' +
+      '<img class="pwa-install-icon" src="img/charts-192.png" alt="">' +
+      '<p id="pwaInstallTitle">Ajouter CHARTS sur ton téléphone ?</p>' +
       '<div class="pwa-install-actions">' +
         '<button type="button" data-pwa="yes">Oui</button>' +
         '<button type="button" data-pwa="no">Non</button>' +
