@@ -4,14 +4,22 @@
   function on() {
     try { return window.matchMedia(MQ).matches; } catch (e) { return false; }
   }
-  function syncTabbar() {
+  var frozenH = 0;
+  function syncTabbar(force) {
     if (!on()) {
+      frozenH = 0;
       document.documentElement.style.removeProperty("--mobile-tabbar-h");
       return 0;
     }
     var bar = document.getElementById("mobileTabBar");
-    if (!bar) return 0;
-    var h = Math.ceil(bar.getBoundingClientRect().height);
+    if (!bar) return frozenH;
+    if (frozenH && !force) {
+      document.documentElement.style.setProperty("--mobile-tabbar-h", frozenH + "px");
+      return frozenH;
+    }
+    var h = Math.ceil(bar.offsetHeight);
+    if (h < 48) h = 86;
+    frozenH = h;
     document.documentElement.style.setProperty("--mobile-tabbar-h", h + "px");
     return h;
   }
@@ -37,16 +45,19 @@
   }
 
   function tabHref(id) {
-    if (id === "boosters") return "booster.html?v=7";
-    if (id === "classeur") return "classeur.html?v=4";
-    if (id === "marche") return "booster.html?v=7#marche";
-    return "fantasy.html?v=20";
+    if (id === "boosters") return "booster.html?v=8";
+    if (id === "classeur") return "classeur.html?v=5";
+    if (id === "marche") return "booster.html?v=8#marche";
+    return "fantasy.html?v=21";
   }
 
   function injectBar() {
     if (document.getElementById("mobileTabBar")) return;
     if (/connexion|legal/.test(location.pathname)) return;
     var cur = pageKey();
+    var shell = document.createElement("div");
+    shell.id = "mobileTabShell";
+    shell.className = "mobile-tab-shell";
     var nav = document.createElement("nav");
     nav.id = "mobileTabBar";
     nav.className = "mobile-tabbar";
@@ -62,7 +73,8 @@
         '<a href="legal/regles.html">Règles</a>' +
         '<a href="legal/index.html?v=2">Mentions légales</a>' +
       "</nav>";
-    document.body.appendChild(nav);
+    shell.appendChild(nav);
+    document.body.appendChild(shell);
     var src = document.getElementById("packsBadge") || document.getElementById("packTileBadge");
     var boost = nav.querySelector('.mobile-tab[data-tab="boosters"]');
     if (src && boost && !src.hidden) {
@@ -138,7 +150,7 @@
   function init() {
     injectBar();
     setupFilters();
-    syncTabbar();
+    requestAnimationFrame(function () { syncTabbar(true); });
   }
   window.addEventListener("hashchange", function () {
     var cur = pageKey();
@@ -150,11 +162,13 @@
   window.addEventListener("resize", function () {
     if (on() && window.innerWidth === lastW) return;
     lastW = window.innerWidth;
-    syncTabbar();
+    frozenH = 0;
+    syncTabbar(true);
   });
   window.addEventListener("orientationchange", function () {
     lastW = window.innerWidth;
-    syncTabbar();
+    frozenH = 0;
+    requestAnimationFrame(function () { syncTabbar(true); });
   });
   if (document.body) init();
   else document.addEventListener("DOMContentLoaded", init);

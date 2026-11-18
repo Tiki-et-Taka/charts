@@ -756,7 +756,7 @@
     .slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=21">
+<link rel="stylesheet" href="css/mobile.css?v=22">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -765,10 +765,10 @@
   <a class="brand" href="lobby.html"><img class="brand-logo" src="img/favicon.png?v=2" alt="" width="32" height="32">Charts</a>
   <nav class="nav-main" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
-    <a href="booster.html?v=7">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
-    <a href="classeur.html?v=4">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
-    <a href="booster.html?v=7#marche">Marché</a>
-    <a class="on" href="fantasy.html?v=20" aria-current="page">Arena</a>
+    <a href="booster.html?v=8">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></a>
+    <a href="classeur.html?v=5">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="booster.html?v=8#marche">Marché</a>
+    <a class="on" href="fantasy.html?v=21" aria-current="page">Arena</a>
   </nav>
   <div class="top-actions">
     <div id="notifMount"></div>
@@ -785,7 +785,7 @@
 </header>
 
 <main class="wrap">
-  <a class="back" href="fantasy.html?v=20">← Retour aux compétitions</a>
+  <a class="back" href="fantasy.html?v=21">← Retour aux compétitions</a>
 
   <section class="hero" aria-label="Compétition">
     <div>
@@ -1605,7 +1605,7 @@ $("btnLock").addEventListener("click", async () => {
       return;
     }
     editSession = false;
-    location.href = "fantasy.html?v=20";
+    location.href = "fantasy.html?v=21";
     return;
   }
   lu.locked = true;
@@ -1613,7 +1613,7 @@ $("btnLock").addEventListener("click", async () => {
   lu.weekStart = ChartsHistory.nextWeekStart();
   saveLineup(lu);
   editSession = false;
-  location.href = "fantasy.html?v=20";
+  location.href = "fantasy.html?v=21";
 });
 $("btnUnlock").addEventListener("click", () => {
   const lu = loadLineup();
@@ -1705,6 +1705,6 @@ document.addEventListener("charts:fantasy", () => {
 boot();
 document.addEventListener("charts:credits-changed", () => syncUserUI());
 </script>
-<script src="js/mobile-ui.js?v=13"></script>
+<script src="js/mobile-ui.js?v=14"></script>
 </body>
 </html>

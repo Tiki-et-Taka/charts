@@ -1617,13 +1617,17 @@
   body.server-mode footer.site-foot .proto-cheats,
   body.server-mode #albumClear { display: none !important; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=21">
+<link rel="stylesheet" href="css/mobile.css?v=22">
 <style>
 @media (max-width: 820px) {
+  footer.site-foot,
+  footer.foot {
+    display: none !important;
+  }
   body:has(.stage):not(.album):not(.market) {
     display: flex !important;
     flex-direction: column;
-    height: 100dvh !important;
+    height: 100svh !important;
     overflow: hidden !important;
   }
   body:has(.stage):not(.album):not(.market) header.top {
@@ -1710,9 +1714,9 @@
   <nav class="nav-main" role="tablist" aria-label="Principal">
     <a href="lobby.html">Lobby</a>
     <button type="button" data-view="booster" id="navBooster" class="on" role="tab">Booster<span class="nav-badge" id="packsBadge" hidden>0</span></button>
-    <a href="classeur.html?v=4" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
+    <a href="classeur.html?v=5" id="navAlbum">Classeur<span class="nav-badge" id="albumNewBadge" hidden>0</span></a>
     <button type="button" data-view="market" id="navMarket" role="tab">Marché</button>
-    <a href="fantasy.html?v=20">Arena</a>
+    <a href="fantasy.html?v=21">Arena</a>
   </nav>
   <div class="top-actions wallet" aria-label="Compte">
     <div class="notif-wrap" id="notifWrap">
@@ -2013,7 +2017,7 @@ function userName(id){
 function sellerProfileLink(id){
   const name = userName(id);
   if(!knownUser(id)) return esc(name);
-  return `<a class="seller-link" href="classeur.html?v=4&joueur=${esc(id)}">${esc(name)}</a>`;
+  return `<a class="seller-link" href="classeur.html?v=5&joueur=${esc(id)}">${esc(name)}</a>`;
 }
 function ownedKey(userId){ return `charts.s1.${userId || uid()}.owned`; }
 function walletKey(userId){ return `charts.s1.${userId || uid()}.wallet`; }
@@ -2249,16 +2253,10 @@ function resetHandFit(){
 }
 function fitOneByOneSlots(){
   if(!hand || !hand.classList.contains("one-by-one")) return;
-  if(window.ChartsMobile && typeof ChartsMobile.syncTabbar === "function"){
-    ChartsMobile.syncTabbar();
-  }
   const stageEl = document.getElementById("stage") || hand.parentElement;
-  const bar = document.getElementById("mobileTabBar");
-  const vv = window.visualViewport;
-  const viewBottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
   const stageBox = stageEl ? stageEl.getBoundingClientRect() : hand.getBoundingClientRect();
-  const barTop = bar ? bar.getBoundingClientRect().top : viewBottom;
-  const holeBottom = Math.min(barTop, viewBottom);
+  const barH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--mobile-tabbar-h")) || 86;
+  const holeBottom = window.innerHeight - barH;
   const inset = 10;
   const bottom = Math.max(inset, stageBox.bottom - holeBottom + inset);
   hand.style.setProperty("zoom", "1", "important");
@@ -4773,8 +4771,8 @@ again.addEventListener("click", async () => {
   if(phase !== "open") return;
   await stashHand();
 });
-$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=4"; });
-$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=4"; });
+$("toAlbum").addEventListener("click", () => { location.href = "classeur.html?v=5"; });
+$("emptyAlbum").addEventListener("click", () => { location.href = "classeur.html?v=5"; });
 function clampShopQty(n){
   const v = Math.floor(Number(n));
   if(!Number.isFinite(v) || v < 1) return 1;
@@ -5517,13 +5515,13 @@ function fitCardZoom(){
 function scheduleFitCardZoom(){
   requestAnimationFrame(() => requestAnimationFrame(fitCardZoom));
 }
+let lastFitW = window.innerWidth;
 window.addEventListener("resize", () => {
   if($("zoom")?.open) fitCardZoom();
+  if(window.innerWidth === lastFitW) return;
+  lastFitW = window.innerWidth;
   fitOpenSlots();
 });
-if(window.visualViewport){
-  visualViewport.addEventListener("resize", fitOpenSlots);
-}
 
 function zoomOptsFromCtx(){
   return {
@@ -6309,7 +6307,7 @@ $("menuBtn")?.addEventListener("click", () => {
 $("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
 $("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
-  if(location.hash === "#classeur") location.replace("classeur.html?v=4");
+  if(location.hash === "#classeur") location.replace("classeur.html?v=5");
   else if(location.hash === "#marche") showView("market");
   else showView("booster");
 });
@@ -6368,7 +6366,7 @@ async function boot(){
     await armNextPack();
     setInterval(tickFreePack, 1000);
     if(location.hash === "#classeur"){
-      location.replace("classeur.html?v=4");
+      location.replace("classeur.html?v=5");
       return;
     }
     if(location.hash === "#marche") showView("market");
@@ -6398,6 +6396,6 @@ document.addEventListener("charts:state", () => {
   if(phase === "empty" && loadWallet().packs > 0) armNextPack();
 });
 </script>
-<script src="js/mobile-ui.js?v=13"></script>
+<script src="js/mobile-ui.js?v=14"></script>
 </body>
 </html>
