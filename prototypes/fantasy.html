@@ -751,12 +751,13 @@ async function doneHtml(entry){
   } else {
     result = `<p class="comp-reward">Résultat le ${esc(shortDay(ChartsHistory.resultDate(entry.weekStart)))}</p>`;
   }
-  const live = ChartsHistory.isOngoing(entry)
-    ? ` · <span class="lock end">Fin dans ${ChartsLock.remainingLabel()}</span>`
-    : "";
+  const week = `Semaine ${esc(ChartsHistory.weekLabel(entry.weekStart))}`;
+  const meta = ChartsHistory.isOngoing(entry)
+    ? `<p class="comp-meta">${week}</p><p class="comp-meta"><span class="lock end">Fin dans ${ChartsLock.remainingLabel()}</span></p>`
+    : `<p class="comp-meta">${week} · ${comp.slots} musiciens</p>`;
   return `<article class="comp has-lineup" role="listitem">
     <div>
-      <p class="comp-meta">Semaine ${esc(ChartsHistory.weekLabel(entry.weekStart))} · ${comp.slots} musiciens${live}</p>
+      ${meta}
       <h2 class="comp-title">${comp.title}</h2>
       ${result}
     </div>
