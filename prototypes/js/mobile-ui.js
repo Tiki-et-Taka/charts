@@ -4,7 +4,20 @@
   function on() {
     try { return window.matchMedia(MQ).matches; } catch (e) { return false; }
   }
-  window.ChartsMobile = { mq: MQ, on: on };
+  function syncTabbar() {
+    if (!on()) {
+      document.documentElement.style.removeProperty("--mobile-tabbar-h");
+      return 0;
+    }
+    var bar = document.getElementById("mobileTabBar");
+    if (!bar) return 0;
+    var rect = bar.getBoundingClientRect();
+    var h = Math.max(rect.height, window.innerHeight - rect.top);
+    h = Math.ceil(h);
+    document.documentElement.style.setProperty("--mobile-tabbar-h", h + "px");
+    return h;
+  }
+  window.ChartsMobile = { mq: MQ, on: on, syncTabbar: syncTabbar };
 
   var ICO = {
     boosters: '<svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(-16 9 13)"><rect x="4.5" y="5" width="10" height="14.5" rx="1.5"/></g><rect x="9.5" y="5" width="10" height="14.5" rx="1.5"/></svg>',
@@ -126,6 +139,7 @@
   function init() {
     injectBar();
     setupFilters();
+    syncTabbar();
   }
   window.addEventListener("hashchange", function () {
     var cur = pageKey();
@@ -133,6 +147,8 @@
       a.classList.toggle("on", a.getAttribute("data-tab") === cur);
     });
   });
+  window.addEventListener("resize", syncTabbar);
+  if (window.visualViewport) visualViewport.addEventListener("resize", syncTabbar);
   if (document.body) init();
   else document.addEventListener("DOMContentLoaded", init);
 })();

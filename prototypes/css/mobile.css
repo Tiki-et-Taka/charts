@@ -9,6 +9,7 @@
     zoom: 1 !important;
     --ui-scale: 1;
     --ui-unscale: 1;
+    --mobile-tabbar-h: 128px;
   }
   html, body {
     min-height: 100%;
@@ -407,7 +408,7 @@
     left: 0;
     right: 0;
     top: 0 !important;
-    bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--mobile-tabbar-h, 128px) + 8px) !important;
     margin: 0 !important;
     gap: 0 !important;
     width: 100%;
@@ -459,7 +460,7 @@
   }
   .hand.one-by-one {
     top: 8px !important;
-    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--mobile-tabbar-h, 128px) + 16px) !important;
     left: 8px !important;
     right: 8px !important;
     align-items: center !important;
@@ -467,14 +468,13 @@
     overflow: hidden !important;
     gap: 0 !important;
     padding: 0 !important;
-    container-type: size;
   }
   .hand.one-by-one .slot-card.wait {
     display: none !important;
   }
   .hand.one-by-one .slot-card {
     /* --s sans unité : scale() du .card 260×364, borné largeur ET hauteur. */
-    --s: var(--fit-s, min(calc(100cqw / 260px), calc(100cqh / 364px), calc((100vw - 32px) / 260px), calc((100dvh - 220px) / 364px)));
+    --s: var(--fit-s, min(calc((100vw - 32px) / 260px), calc((100dvh - var(--mobile-tabbar-h, 128px) - 176px) / 364px)));
     width: calc(260px * var(--s)) !important;
     height: calc(364px * var(--s)) !important;
     max-width: 100%;
@@ -488,7 +488,7 @@
     pointer-events: none;
   }
   .again-row {
-    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(var(--mobile-tabbar-h, 128px) + 12px) !important;
     width: calc(100% - 24px);
     justify-content: center;
   }
