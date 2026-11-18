@@ -565,7 +565,6 @@ const SLOT_KEYS = ["voix", "ryt1", "ryt2", "melo1", "melo2"];
 const COMPS = [
   {
     id: "all-stars-5",
-    rank: 1,
     title: "All Stars — 5",
     slots: 5,
     status: "open",
@@ -575,7 +574,6 @@ const COMPS = [
   },
   {
     id: "all-stars-4",
-    rank: null,
     title: "All Stars — 4 bientôt !",
     slots: 4,
     status: "soon",
@@ -873,7 +871,6 @@ function filteredComps(){
 
 function metaHtml(comp){
   const bits = [];
-  if(comp.rank != null) bits.push(`#${comp.rank}`);
   bits.push(`${comp.slots} musiciens requis`);
   let html = bits.join(" · ");
   if(comp.status === "open" && comp.locks){
