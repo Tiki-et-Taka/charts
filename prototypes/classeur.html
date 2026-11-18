@@ -202,6 +202,7 @@
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
   }
+  .filt-row-sort .filt-sort { margin-left: 0; }
   .filt-sort select {
     appearance: none;
     border: 1px solid var(--line); background: var(--panel); color: var(--ink);
@@ -717,7 +718,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=15">
+<link rel="stylesheet" href="css/mobile.css?v=16">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -762,13 +763,7 @@
       <div class="filt-chips" id="rareChips" role="group" aria-label="Rareté"></div>
     </div>
     <div class="filt-sheet-panel" id="filtersPanel">
-      <div class="filt-row">
-        <span class="filt-label">Instrument</span>
-        <div class="filt-chips" id="instrChips" role="group" aria-label="Instrument"></div>
-      </div>
-      <div class="filt-row">
-        <span class="filt-label">Genre</span>
-        <div class="filt-chips" id="genreChips" role="group" aria-label="Genre"></div>
+      <div class="filt-row filt-row-sort">
         <div class="filt-sort">
           <label for="sortBy">Trier par</label>
           <select id="sortBy">
@@ -776,6 +771,14 @@
             <option value="name">Nom</option>
           </select>
         </div>
+      </div>
+      <div class="filt-row">
+        <span class="filt-label">Instrument</span>
+        <div class="filt-chips" id="instrChips" role="group" aria-label="Instrument"></div>
+      </div>
+      <div class="filt-row">
+        <span class="filt-label">Genre</span>
+        <div class="filt-chips" id="genreChips" role="group" aria-label="Genre"></div>
       </div>
     </div>
     <div class="filt-toolbar">

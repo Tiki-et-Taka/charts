@@ -402,6 +402,14 @@
     margin-left: 0 !important;
     width: 100%;
   }
+  body.filt-sheet-open .filt-row-sort {
+    order: -1;
+  }
+  body.filt-sheet-open .filt-row-sort .filt-sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
   .filt-sort select {
     min-height: 44px;
     flex: 1;
