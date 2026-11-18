@@ -78,7 +78,8 @@
   function setupFilters() {
     var filters = document.querySelector("main .filters, .wrap > .filters, section.filters");
     if (!filters || !document.getElementById("rareChips")) return;
-    var searchRow = filters.querySelector(".filt-row:last-of-type") || filters.querySelector(".filt-row");
+    var sheet = document.getElementById("filtersPanel") || filters;
+    var searchRow = filters.querySelector(".filt-row-search") || filters.querySelector(".filt-row");
     var search = document.getElementById("q");
     if (search && search.closest(".filt-row")) {
       search.closest(".filt-row").classList.add("filt-row-search");
@@ -100,21 +101,21 @@
       veil.className = "mobile-filt-veil";
       document.body.appendChild(veil);
     }
-    filters.id = filters.id || "filtersPanel";
+    if (!sheet.id) sheet.id = "filtersPanel";
     if (!document.getElementById("mobileFiltDone")) {
       var done = document.createElement("button");
       done.type = "button";
       done.id = "mobileFiltDone";
       done.className = "mobile-only mobile-filt-done mobile-filt-toggle";
       done.textContent = "Voir les cartes";
-      filters.appendChild(done);
+      sheet.appendChild(done);
     }
     var toggle = document.getElementById("mobileFiltToggle");
     var veilEl = document.getElementById("mobileFiltVeil");
     var doneBtn = document.getElementById("mobileFiltDone");
     function setOpen(open) {
       document.body.classList.toggle("filt-sheet-open", open);
-      filters.classList.toggle("is-open", open);
+      sheet.classList.toggle("is-open", open);
       if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
     }
     if (toggle && !toggle.dataset.bound) {

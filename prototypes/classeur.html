@@ -154,6 +154,19 @@
     display: grid;
     gap: 12px;
   }
+  .filt-sheet-panel { display: contents; }
+  .filt-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+  }
+  .filt-toolbar .filt-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+  }
   .filt-row {
     display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
   }
@@ -704,7 +717,7 @@
   .info-tip:focus .tip,
   .info-tip.open .tip { opacity: 1; visibility: visible; }
 </style>
-<link rel="stylesheet" href="css/mobile.css?v=13">
+<link rel="stylesheet" href="css/mobile.css?v=14">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -748,36 +761,42 @@
       <span class="filt-label">Rareté</span>
       <div class="filt-chips" id="rareChips" role="group" aria-label="Rareté"></div>
     </div>
-    <div class="filt-row">
-      <span class="filt-label">Instrument</span>
-      <div class="filt-chips" id="instrChips" role="group" aria-label="Instrument"></div>
-    </div>
-    <div class="filt-row">
-      <span class="filt-label">Genre</span>
-      <div class="filt-chips" id="genreChips" role="group" aria-label="Genre"></div>
-      <div class="filt-sort">
-        <label for="sortBy">Trier par</label>
-        <select id="sortBy">
-          <option value="num">Numéro de série</option>
-          <option value="name">Nom</option>
-        </select>
+    <div class="filt-sheet-panel" id="filtersPanel">
+      <div class="filt-row">
+        <span class="filt-label">Instrument</span>
+        <div class="filt-chips" id="instrChips" role="group" aria-label="Instrument"></div>
+      </div>
+      <div class="filt-row">
+        <span class="filt-label">Genre</span>
+        <div class="filt-chips" id="genreChips" role="group" aria-label="Genre"></div>
+        <div class="filt-sort">
+          <label for="sortBy">Trier par</label>
+          <select id="sortBy">
+            <option value="num">Numéro de série</option>
+            <option value="name">Nom</option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="filt-row filt-row-search">
-      <span class="filt-label">Recherche</span>
-      <input class="filt-search" type="search" id="q" placeholder="Nom ou groupe" autocomplete="off">
-      <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Afficher manquantes</button>
-      <button type="button" class="fchip" id="newOnly" aria-pressed="false">Nouvelles</button>
-      <button type="button" class="fchip" id="favOnly" aria-pressed="false">Favoris</button>
-      <button type="button" class="fchip filt-mark-seen" id="seeAllNew">Tout marquer comme vu</button>
-    </div>
-    <div class="filt-row filt-row-rare-letters mobile-only">
-      <div class="rare-letters" id="rareLetters" role="group" aria-label="Rareté">
-        <button type="button" class="rare-letter" data-rare="commune" aria-pressed="false" aria-label="Commune" title="Commune">C</button>
-        <button type="button" class="rare-letter" data-rare="argent" aria-pressed="false" aria-label="Argent" title="Argent">A</button>
-        <button type="button" class="rare-letter" data-rare="or" aria-pressed="false" aria-label="Or" title="Or">O</button>
-        <button type="button" class="rare-letter" data-rare="platine" aria-pressed="false" aria-label="Platine" title="Platine">P</button>
-        <button type="button" class="rare-letter" data-rare="diamant" aria-pressed="false" aria-label="Diamant" title="Diamant">D</button>
+    <div class="filt-toolbar">
+      <div class="filt-row filt-row-search">
+        <span class="filt-label">Recherche</span>
+        <input class="filt-search" type="search" id="q" placeholder="Nom ou groupe" autocomplete="off">
+      </div>
+      <div class="filt-row filt-row-rare-letters mobile-only">
+        <div class="rare-letters" id="rareLetters" role="group" aria-label="Rareté">
+          <button type="button" class="rare-letter" data-rare="commune" aria-pressed="false" aria-label="Commune" title="Commune">C</button>
+          <button type="button" class="rare-letter" data-rare="argent" aria-pressed="false" aria-label="Argent" title="Argent">A</button>
+          <button type="button" class="rare-letter" data-rare="or" aria-pressed="false" aria-label="Or" title="Or">O</button>
+          <button type="button" class="rare-letter" data-rare="platine" aria-pressed="false" aria-label="Platine" title="Platine">P</button>
+          <button type="button" class="rare-letter" data-rare="diamant" aria-pressed="false" aria-label="Diamant" title="Diamant">D</button>
+        </div>
+      </div>
+      <div class="filt-row filt-row-quick">
+        <button type="button" class="fchip" id="hideMissing" aria-pressed="false">Afficher manquantes</button>
+        <button type="button" class="fchip" id="newOnly" aria-pressed="false">Nouvelles</button>
+        <button type="button" class="fchip" id="favOnly" aria-pressed="false">Favoris</button>
+        <button type="button" class="fchip filt-mark-seen" id="seeAllNew">Tout marquer comme vu</button>
       </div>
     </div>
   </section>
@@ -1954,6 +1973,6 @@ document.addEventListener("charts:market", () => {
   if(catalog.length && !viewingOther() && $("zoom").hidden) render();
 });
 </script>
-<script src="js/mobile-ui.js?v=4"></script>
+<script src="js/mobile-ui.js?v=6"></script>
 </body>
 </html>
