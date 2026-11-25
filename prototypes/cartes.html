@@ -329,7 +329,7 @@ function renderCard(card, opts={}){
       <div class="group">${group}</div>
       ${mythique ? `<div class="line-rare">${tier.label}</div><div class="line-info">${fam.label} · ${INSTR[card.instrument]} · <span class="line-group">${group}</span></div>` : ""}
     </div>
-    <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/1000</span></div>
+    <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/${catalog.length || 2000}</span></div>
     ${frameSvg(kind, tier.rank, frame, uid)}
   </div>`;
 }

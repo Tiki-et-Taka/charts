@@ -1291,7 +1291,7 @@ function renderCard(card, opts={}){
       <div class="group">${esc(group)}</div>
       ${diamant ? `<div class="line-rare">${tier.label}</div><div class="line-info">${esc(fam.label)} · ${esc(instrumentLabel(card))} · <span class="line-group">${esc(group)}</span></div>` : ""}
     </div>
-    <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/${catalog.length || 1000}</span></div>
+    <div class="marks" aria-hidden="true"><span class="serie">S1</span><span class="no">${card.rank || 0}/${catalog.length || 2000}</span></div>
     ${frameSvg(tier.kind, tier.rank, tier.frame)}
   </div>`;
 }
