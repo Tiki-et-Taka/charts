@@ -298,6 +298,7 @@
 </aside>
 
 <script src="js/profile-avatar.js?v=3"></script>
+<script src="js/profile-drawer.js?v=1"></script>
 <script src="js/notifications.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
@@ -369,21 +370,9 @@ function loadActiveUser(){
   if(window.ChartsNotif) ChartsNotif.refresh();
 }
 
-const menuBtn = $("menuBtn");
-const drawer = $("drawer");
-const veil = $("drawerVeil");
 function setMenuOpen(open){
-  menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-  drawer.hidden = !open;
-  veil.hidden = !open;
-  if(open) refreshCredits();
+  if(window.ChartsDrawer) ChartsDrawer.setOpen(open);
 }
-menuBtn.addEventListener("click", () => setMenuOpen(menuBtn.getAttribute("aria-expanded") !== "true"));
-$("drawerClose").addEventListener("click", () => setMenuOpen(false));
-veil.addEventListener("click", () => setMenuOpen(false));
-document.addEventListener("keydown", ev => {
-  if(ev.key === "Escape") setMenuOpen(false);
-});
 
 async function render(){
   const params = new URLSearchParams(location.search);
@@ -443,6 +432,7 @@ function rankingTable(rows){
   </table>`;
 }
 
+if(window.ChartsDrawer) ChartsDrawer.bind({ onOpen: () => refreshCredits() });
 if(window.ChartsAvatar) ChartsAvatar.bind({ getUserId: () => activeUserId });
 if(window.ChartsNotif) ChartsNotif.bind({ getUserId: () => activeUserId });
 loadActiveUser();

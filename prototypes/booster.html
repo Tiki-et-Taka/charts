@@ -1968,6 +1968,7 @@
 </dialog>
 
 <script src="js/profile-avatar.js?v=3"></script>
+<script src="js/profile-drawer.js?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
 <script src="js/charts-api.js?v=2"></script>
@@ -2153,19 +2154,7 @@ function switchUser(nextId){
   return true;
 }
 function setMenuOpen(open){
-  const menuBtn = $("menuBtn");
-  const drawer = $("drawer");
-  const veil = $("drawerVeil");
-  if(!menuBtn || !drawer || !veil) return;
-  menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-  drawer.hidden = !open;
-  veil.hidden = !open;
-  drawer.classList.toggle("open", open);
-  veil.classList.toggle("open", open);
-  if(open){
-    refreshWallet();
-    syncUserSwitchUI();
-  }
+  if(window.ChartsDrawer) ChartsDrawer.setOpen(open);
 }
 const STARTER_PACKS = 5;
 const STARTER_CREDITS = 50;
@@ -6328,11 +6317,6 @@ $("confirm").addEventListener("click", ev => {
     if(fn) fn();
   }
 });
-$("menuBtn")?.addEventListener("click", () => {
-  setMenuOpen($("menuBtn").getAttribute("aria-expanded") !== "true");
-});
-$("drawerClose")?.addEventListener("click", () => setMenuOpen(false));
-$("drawerVeil")?.addEventListener("click", () => setMenuOpen(false));
 window.addEventListener("hashchange", () => {
   if(location.hash === "#classeur") location.replace("classeur.html?v=10");
   else if(location.hash === "#marche") showView("market");
@@ -6367,6 +6351,14 @@ function tickFreePack(){
   if(phase === "empty" && w.packs > packsBefore) armNextPack();
 }
 
+if(window.ChartsDrawer){
+  ChartsDrawer.bind({
+    onOpen: () => {
+      refreshWallet();
+      syncUserSwitchUI();
+    }
+  });
+}
 async function boot(){
   try {
     loadActiveUser();

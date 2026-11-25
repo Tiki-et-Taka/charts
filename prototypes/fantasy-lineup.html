@@ -894,6 +894,7 @@
 </aside>
 
 <script src="js/profile-avatar.js?v=3"></script>
+<script src="js/profile-drawer.js?v=1"></script>
 <script src="js/notifications.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
@@ -1629,19 +1630,10 @@ $("btnUnlock").addEventListener("click", () => {
   refreshAll();
 });
 
-const menuBtn = $("menuBtn");
-const drawer = $("drawer");
-const veil = $("drawerVeil");
 function setMenuOpen(open){
   if(open) closePick();
-  menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-  drawer.hidden = !open;
-  veil.hidden = !open;
-  if(open) syncUserUI();
+  if(window.ChartsDrawer) ChartsDrawer.setOpen(open);
 }
-menuBtn.addEventListener("click", () => setMenuOpen(menuBtn.getAttribute("aria-expanded") !== "true"));
-$("drawerClose").addEventListener("click", () => setMenuOpen(false));
-veil.addEventListener("click", () => setMenuOpen(false));
 function switchUser(nextId){
   if(!knownUser(nextId)) return false;
   if(nextId === activeUserId) return true;
@@ -1667,6 +1659,9 @@ window.addEventListener("resize", () => {
   scalePickCards();
 });
 
+if(window.ChartsDrawer){
+  ChartsDrawer.bind({ onOpen: () => { closePick(); syncUserUI(); } });
+}
 async function boot(){
   activeUserId = ChartsAccounts.session();
   if(!activeUserId) return;

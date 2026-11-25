@@ -369,6 +369,7 @@
 </aside>
 
 <script src="js/profile-avatar.js?v=3"></script>
+<script src="js/profile-drawer.js?v=1"></script>
 <script src="js/notifications.js?v=3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 <script src="js/charts-config.js?v=1"></script>
@@ -591,21 +592,16 @@ $("pickQ").addEventListener("input", () => {
 $("pickClose").addEventListener("click", closePick);
 $("pickVeil").addEventListener("click", closePick);
 
-const menuBtn = $("menuBtn");
-const drawer = $("drawer");
-const veil = $("drawerVeil");
 function setMenuOpen(open){
-  menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-  drawer.hidden = !open;
-  veil.hidden = !open;
+  if(window.ChartsDrawer) ChartsDrawer.setOpen(open);
 }
-menuBtn.addEventListener("click", () => setMenuOpen(menuBtn.getAttribute("aria-expanded") !== "true"));
-$("drawerClose").addEventListener("click", () => setMenuOpen(false));
-veil.addEventListener("click", () => setMenuOpen(false));
 $("drawerLogout").addEventListener("click", () => {
   if(window.ChartsAccounts) ChartsAccounts.logout();
 });
 
+if(window.ChartsDrawer){
+  ChartsDrawer.bind({ onOpen: () => refreshCredits() });
+}
 if(window.ChartsAvatar){
   ChartsAvatar.bind({ getUserId: () => activeUserId });
 }
